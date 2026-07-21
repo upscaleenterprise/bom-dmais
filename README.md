@@ -1,4 +1,6 @@
-# Bom D+ — delivery de churrascaria
+# Bom D+ — delivery de churrasquinho
+
+**No ar em [bom-dmais.vercel.app](https://bom-dmais.vercel.app)**
 
 Sistema de delivery completo: cardápio, carrinho, checkout com Pix, acompanhamento
 do pedido e painel da cozinha em tempo real.
