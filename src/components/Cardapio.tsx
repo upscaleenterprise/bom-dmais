@@ -3,18 +3,14 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { Category, Product, Store } from '@/lib/types'
-import { formatBRL } from '@/lib/money'
+import { faixaDePreco, formatBRL } from '@/lib/money'
 import { estadoDaLoja, formatarHora, recadoDeFechado } from '@/lib/horario'
 import { useHidratado } from '@/lib/hidratado'
 import { ProductSheet } from './ProductSheet'
 import { CartBar } from './CartBar'
 
-function precoDe(product: Product): string {
-  const precos = product.variants.map((v) => v.price_cents)
-  if (precos.length === 0) return ''
-  const menor = Math.min(...precos)
-  return precos.length > 1 ? `a partir de ${formatBRL(menor)}` : formatBRL(menor)
-}
+const precoDe = (product: Product) =>
+  faixaDePreco(product.variants.map((v) => v.price_cents))
 
 function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
   const estado = aberta

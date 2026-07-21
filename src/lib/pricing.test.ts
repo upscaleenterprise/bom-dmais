@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { unitPrice, lineTotal, subtotal, sameLine, meetsMinimum } from './pricing.ts'
 import { validateGroup, firstError } from './selection.ts'
-import { formatBRL, parseBRL } from './money.ts'
+import { faixaDePreco, formatBRL, parseBRL } from './money.ts'
 import type { CartItem, NewCartItem } from './pricing.ts'
 
 const picanha = (over: Partial<CartItem> = {}): CartItem => ({
@@ -128,6 +128,27 @@ test('pedido mínimo', () => {
 test('formata em real', () => {
   assert.equal(formatBRL(7990).replace(/ /g, ' '), 'R$ 79,90')
   assert.equal(formatBRL(0).replace(/ /g, ' '), 'R$ 0,00')
+})
+
+// O toLocaleString('pt-BR') separa "R$" do número com espaço não-quebrável
+// (U+00A0). Normalizo pelo código do caractere, não pelo caractere literal —
+// digitado, ele é indistinguível de um espaço comum e a troca vira no-op.
+const semNbsp = (s: string) => s.replace(/\u00a0/g, ' ')
+
+test('preço único não vira "a partir de"', () => {
+  // H2OH e Limoneto custam os dois R$ 7 — "a partir de" sugeriria um preço
+  // maior escondido dentro do item.
+  assert.equal(semNbsp(faixaDePreco([700, 700])), 'R$ 7,00')
+  assert.equal(semNbsp(faixaDePreco([300])), 'R$ 3,00')
+})
+
+test('preço que varia mostra o menor com "a partir de"', () => {
+  // Os sucos vão de R$ 6 (acerola) a R$ 8 (cupuaçu).
+  assert.equal(semNbsp(faixaDePreco([600, 600, 700, 800])), 'a partir de R$ 6,00')
+})
+
+test('produto sem variação não quebra', () => {
+  assert.equal(faixaDePreco([]), '')
 })
 
 test('lê o que o usuário digita', () => {
