@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { Category, Product, Store } from '@/lib/types'
 import { formatBRL } from '@/lib/money'
+import { estadoDaLoja, formatarHora, recadoDeFechado } from '@/lib/horario'
+import { useHidratado } from '@/lib/hidratado'
 import { ProductSheet } from './ProductSheet'
 import { CartBar } from './CartBar'
 
@@ -14,7 +16,12 @@ function precoDe(product: Product): string {
   return precos.length > 1 ? `a partir de ${formatBRL(menor)}` : formatBRL(menor)
 }
 
-function StoreHeader({ store }: { store: Store }) {
+function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
+  const estado = aberta
+    ? ({ aberta: true } as const)
+    : ({ aberta: false, motivo: store.is_open ? 'fora_do_horario' : 'fechada_pelo_dono' } as const)
+  const recado = recadoDeFechado(estado, store.opens_at)
+
   return (
     <header className="relative overflow-hidden border-b border-borda bg-fumaca">
       {/* A brasa vive atrás do nome. Sem animação: o brilho já é o suficiente. */}
@@ -43,22 +50,29 @@ function StoreHeader({ store }: { store: Store }) {
             <span
               aria-hidden
               className={`h-2 w-2 rounded-full ${
-                store.is_open
+                aberta
                   ? 'bg-brasa-viva shadow-[0_0_10px_var(--color-brasa-viva)]'
                   : 'bg-sal-fraco'
               }`}
             />
-            <span className="etiqueta text-sal">
-              {store.is_open ? 'Aberta agora' : 'Fechada'}
-            </span>
+            {/* Fechado sem dizer quando volta faz a pessoa desistir de vez. */}
+            <span className="etiqueta text-sal">{aberta ? 'Aberto agora' : recado}</span>
+          </span>
+
+          <span className="etiqueta text-sal-fraco">
+            Todo dia, {formatarHora(store.opens_at)} às {formatarHora(store.closes_at)}
           </span>
 
           <span className="etiqueta text-sal-fraco">
             Entrega {formatBRL(store.delivery_fee_cents)}
           </span>
-          <span className="etiqueta text-sal-fraco">
-            Mínimo {formatBRL(store.min_order_cents)}
-          </span>
+
+          {/* Sem pedido mínimo, "Mínimo R$ 0,00" é ruído. */}
+          {store.min_order_cents > 0 && (
+            <span className="etiqueta text-sal-fraco">
+              Mínimo {formatBRL(store.min_order_cents)}
+            </span>
+          )}
         </div>
       </div>
     </header>
@@ -139,9 +153,32 @@ export function Cardapio({
 }) {
   const [aberto, setAberto] = useState<Product | null>(null)
 
+  // O relógio do servidor e o do navegador não batem no segundo, e isso daria
+  // mismatch de hidratação. Antes de hidratar, trata como aberta — quem barra
+  // pedido fora de hora é o banco, não esta tela.
+  const hidratado = useHidratado()
+  const [agora, setAgora] = useState(() => new Date())
+
+  useEffect(() => {
+    // A janela é curta (4h). Sem isto, quem deixa a página aberta às 22h59
+    // continua vendo "Aberto agora" depois das 23h.
+    const t = setInterval(() => setAgora(new Date()), 60_000)
+    return () => clearInterval(t)
+  }, [])
+
+  const aberta = !hidratado
+    ? true
+    : estadoDaLoja({
+        isOpen: store.is_open,
+        opensAt: store.opens_at,
+        closesAt: store.closes_at,
+        timezone: store.timezone,
+        agora,
+      }).aberta
+
   return (
     <>
-      <StoreHeader store={store} />
+      <StoreHeader store={store} aberta={aberta} />
 
       <nav
         aria-label="Categorias"
@@ -172,7 +209,7 @@ export function Cardapio({
                 <ProductRow
                   key={product.id}
                   product={product}
-                  disabled={!store.is_open}
+                  disabled={!aberta}
                   onPick={() => setAberto(product)}
                 />
               ))}
