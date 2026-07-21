@@ -10,8 +10,8 @@ test('CRC16/CCITT-FALSE bate com o vetor de verificação padrão', () => {
 })
 
 const dados = {
-  chave: 'contato@brasaviva.com.br',
-  nome: 'Brasa Viva Churrascaria',
+  chave: 'pix@bomdmais.com.br',
+  nome: 'Churrasquinho Bom D+',
   cidade: 'Sao Luis',
   valorCents: 19760,
   referencia: 'B647',
@@ -34,7 +34,7 @@ test('os campos obrigatórios estão no lugar', () => {
   assert.equal(campos['53'], '986', 'moeda: real')
   assert.equal(campos['54'], '197.60', 'valor com ponto e 2 casas')
   assert.equal(campos['58'], 'BR')
-  assert.equal(campos['59'], 'Brasa Viva Churrascaria')
+  assert.equal(campos['59'], 'Churrasquinho Bom D+')
   assert.equal(campos['60'], 'Sao Luis')
 })
 
@@ -42,7 +42,7 @@ test('a chave Pix vai dentro do campo do arranjo', () => {
   const campos = lerBRCode(gerarBRCode(dados))
   const conta = lerBRCode(campos['26'])
   assert.equal(conta['00'], 'br.gov.bcb.pix')
-  assert.equal(conta['01'], 'contato@brasaviva.com.br')
+  assert.equal(conta['01'], 'pix@bomdmais.com.br')
 })
 
 test('o código do pedido vira o identificador da transação', () => {
@@ -94,8 +94,11 @@ test('o tamanho declarado de cada campo bate com o conteúdo', () => {
 
 test('tamanho declarado maior que o conteúdo não é lido como válido', () => {
   const codigo = gerarBRCode(dados)
-  // 5923Brasa... -> 5999Brasa...: diz que o nome tem 99 caracteres.
-  const quebrado = codigo.replace('5923Brasa', '5999Brasa')
+  // Adultera o tamanho declarado do campo 59: diz que o nome tem 99 caracteres.
+  // O padrão é montado a partir de `dados`, não escrito à mão — trocar o nome
+  // da loja não pode quebrar um teste que não é sobre o nome.
+  const campo59 = `59${String(dados.nome.length).padStart(2, '0')}${dados.nome}`
+  const quebrado = codigo.replace(campo59, `5999${dados.nome}`)
   const { consumido } = lerBRCode(quebrado)
   assert.notEqual(consumido, quebrado.length)
 })

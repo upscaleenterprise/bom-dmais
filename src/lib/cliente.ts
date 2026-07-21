@@ -40,7 +40,7 @@ export const useCliente = create<ClienteState>()(
       salvar: (dados) =>
         set((state) => ({ cliente: { ...state.cliente, ...dados } })),
     }),
-    { name: 'brasa-cliente' },
+    { name: 'bomdmais-cliente' },
   ),
 )
 

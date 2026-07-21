@@ -14,4 +14,4 @@ if (!url || !anonKey) {
 // os dados é o RLS no banco, não o segredo da chave.
 export const supabase = createClient(url, anonKey)
 
-export const STORE_SLUG = process.env.NEXT_PUBLIC_STORE_SLUG ?? 'brasa-viva'
+export const STORE_SLUG = process.env.NEXT_PUBLIC_STORE_SLUG ?? 'bom-dmais'

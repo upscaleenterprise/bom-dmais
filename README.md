@@ -1,4 +1,4 @@
-# Brasa Viva — delivery de churrascaria
+# Bom D+ — delivery de churrascaria
 
 Sistema de delivery completo: cardápio, carrinho, checkout com Pix, acompanhamento
 do pedido e painel da cozinha em tempo real.
@@ -106,7 +106,7 @@ loja:
 insert into store_members (store_id, user_id)
 select s.id, u.id
 from stores s, auth.users u
-where s.slug = 'brasa-viva' and u.email = 'seu-email@exemplo.com';
+where s.slug = 'bom-dmais' and u.email = 'seu-email@exemplo.com';
 ```
 
 ## Testes

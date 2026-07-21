@@ -3,7 +3,7 @@
 
 alter table stores add column city text not null default 'Sao Luis';
 
-update stores set city = 'Sao Luis' where slug = 'brasa-viva';
+update stores set city = 'Sao Luis' where slug = 'bom-dmais';
 
 -- get_order já devolve os dados da loja; passa a incluir a cidade.
 create or replace function get_order(p_order_id uuid)

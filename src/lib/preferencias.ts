@@ -18,6 +18,6 @@ export const usePreferencias = create<Preferencias>()(
       mudo: false,
       setMudo: (mudo) => set({ mudo }),
     }),
-    { name: 'brasa-painel' },
+    { name: 'bomdmais-painel' },
   ),
 )

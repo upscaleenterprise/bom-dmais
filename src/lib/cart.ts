@@ -59,7 +59,7 @@ export const useCart = create<CartState>()(
 
       clear: () => set({ items: [] }),
     }),
-    { name: 'brasa-cart' },
+    { name: 'bomdmais-cart' },
   ),
 )
 

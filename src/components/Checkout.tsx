@@ -135,7 +135,7 @@ export function Checkout({ store }: { store: Store }) {
               value={cliente.nome}
               onChange={(v) => salvar({ nome: v })}
               erro={tentou ? erros.nome : undefined}
-              placeholder="Como te chamamos"
+              placeholder="Como te brasa-vivamos"
               autoComplete="name"
             />
             <Campo

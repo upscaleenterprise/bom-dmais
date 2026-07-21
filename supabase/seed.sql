@@ -2,11 +2,11 @@
 
 insert into stores (slug, name, description, phone, pix_key, is_open, delivery_fee_cents, min_order_cents)
 values (
-  'brasa-viva',
-  'Brasa Viva Churrascaria',
+  'bom-dmais',
+  'Churrasquinho Bom D+',
   'Carne no ponto, entregue quente.',
   '5598999999999',
-  'contato@brasaviva.com.br',
+  'pix@bomdmais.com.br',
   true,
   800,
   4000
@@ -20,7 +20,7 @@ select id, nome, pos from stores, (values
   ('Acompanhamentos', 3),
   ('Bebidas', 4)
 ) as c (nome, pos)
-where slug = 'brasa-viva';
+where slug = 'bom-dmais';
 
 insert into products (store_id, category_id, name, description, position)
 select s.id, c.id, p.nome, p.descricao, p.pos
@@ -44,7 +44,7 @@ join (values
   ('Bebidas',         'Guaraná Antarctica',      'Gelada.', 1),
   ('Bebidas',         'Cerveja Heineken',        'Long neck 330ml.', 2)
 ) as p (categoria, nome, descricao, pos) on p.categoria = c.name
-where s.slug = 'brasa-viva';
+where s.slug = 'bom-dmais';
 
 insert into product_variants (product_id, name, price_cents, position)
 select p.id, v.tamanho, v.preco, v.pos

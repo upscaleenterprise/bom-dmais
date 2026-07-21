@@ -20,7 +20,7 @@ const archivo = Archivo({
 })
 
 export const metadata: Metadata = {
-  title: 'Brasa Viva Churrascaria',
+  title: 'Churrasquinho Bom D+',
   description: 'Carne no ponto, entregue quente.',
 }
 
