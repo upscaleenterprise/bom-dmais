@@ -30,7 +30,7 @@ export function Carrinho({ store }: { store: Store }) {
           </p>
           <Link
             href="/"
-            className="mt-1 rounded-lg bg-brasa px-5 py-3 font-semibold text-carvao transition-colors hover:bg-brasa-viva"
+            className="mt-1 rounded-lg bg-vermelho px-5 py-3 font-semibold text-sal transition-colors hover:bg-brasa"
           >
             Ver o cardápio
           </Link>
@@ -63,7 +63,7 @@ export function Carrinho({ store }: { store: Store }) {
                         <li key={o.optionId} className="text-xs text-sal-fraco">
                           {o.optionName}
                           {o.priceCents > 0 && (
-                            <span className="text-brasa-viva">
+                            <span className="text-amarelo">
                               {' '}
                               + {formatBRL(o.priceCents)}
                             </span>
@@ -111,7 +111,7 @@ export function Carrinho({ store }: { store: Store }) {
                 <button
                   type="button"
                   onClick={() => remove(item.lineId)}
-                  className="etiqueta text-sal-fraco underline-offset-4 hover:text-mal hover:underline"
+                  className="etiqueta text-sal-fraco underline-offset-4 hover:text-erro hover:underline"
                 >
                   Remover
                 </button>
@@ -140,7 +140,7 @@ export function Carrinho({ store }: { store: Store }) {
           </div>
           <div className="flex justify-between border-t border-borda pt-2.5">
             <dt className="placa text-lg text-sal">Total</dt>
-            <dd className="placa text-lg tabular-nums text-brasa-viva">
+            <dd className="placa text-lg tabular-nums text-amarelo">
               {formatBRL(total)}
             </dd>
           </div>
@@ -152,7 +152,7 @@ export function Carrinho({ store }: { store: Store }) {
           {!bate && (
             <p className="mb-2.5 text-center text-xs text-sal-fraco">
               Faltam{' '}
-              <span className="font-semibold text-brasa-viva">
+              <span className="font-semibold text-amarelo">
                 {formatBRL(store.min_order_cents - subtotal)}
               </span>{' '}
               para o pedido mínimo
@@ -164,7 +164,7 @@ export function Carrinho({ store }: { store: Store }) {
             tabIndex={bate ? undefined : -1}
             className={`flex h-12 items-center justify-between rounded-lg px-4 font-semibold transition-colors ${
               bate
-                ? 'bg-brasa text-carvao hover:bg-brasa-viva'
+                ? 'bg-vermelho text-sal hover:bg-brasa'
                 : 'pointer-events-none bg-borda text-sal-fraco'
             }`}
           >

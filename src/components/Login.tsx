@@ -60,7 +60,7 @@ export function Login() {
         </label>
 
         {erro && (
-          <p role="alert" className="text-sm font-medium text-mal">
+          <p role="alert" className="text-sm font-medium text-erro">
             {erro}
           </p>
         )}
@@ -68,7 +68,7 @@ export function Login() {
         <button
           type="submit"
           disabled={entrando}
-          className="h-12 w-full rounded-lg bg-brasa font-semibold text-carvao transition-colors hover:bg-brasa-viva disabled:opacity-60"
+          className="h-12 w-full rounded-lg bg-vermelho font-semibold text-sal transition-colors hover:bg-brasa disabled:opacity-60"
         >
           {entrando ? 'Entrando...' : 'Entrar'}
         </button>

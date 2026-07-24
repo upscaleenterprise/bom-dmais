@@ -5,7 +5,8 @@ import Image from 'next/image'
 import type { OptionGroup, Product, Variant } from '@/lib/types'
 import { formatBRL } from '@/lib/money'
 import { firstError } from '@/lib/selection'
-import { corteDoPonto, isPonto } from '@/lib/ponto'
+import { temEspeto } from '@/lib/sabor'
+import { Espeto } from './Espeto'
 import { useCart } from '@/lib/cart'
 import { unitPrice } from '@/lib/pricing'
 
@@ -50,6 +51,13 @@ export function ProductSheet({
       document.body.style.overflow = ''
     }
   }, [onClose])
+
+  // Sabor de espeto ganha a grelha; tamanho de refrigerante e fruta de suco
+  // continuam em lista comum, porque desenhar espeto ali seria mentira.
+  const saborizado = useMemo(
+    () => product.variants.every((v) => temEspeto(v.name)),
+    [product.variants],
+  )
 
   const erro = useMemo(
     () => firstError(product.option_groups, selection),
@@ -176,110 +184,128 @@ export function ProductSheet({
           <div className="px-5 py-5">
           {product.variants.length > 1 && (
             <fieldset className="mb-7">
-              <legend className="etiqueta mb-3 text-sal-fraco">Tamanho</legend>
-              <div className="flex flex-wrap gap-2">
-                {product.variants.map((v) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => setVariant(v)}
-                    aria-pressed={v.id === variant.id}
-                    className={`rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors ${
-                      v.id === variant.id
-                        ? 'border-brasa bg-brasa/15 text-sal'
-                        : 'border-borda text-sal-fraco hover:border-sal-fraco'
-                    }`}
-                  >
-                    {v.name}
-                    <span className="ml-2 text-brasa-viva">
-                      {formatBRL(v.price_cents)}
-                    </span>
-                  </button>
-                ))}
-              </div>
+              <legend className="etiqueta mb-3 text-sal-fraco">
+                {saborizado ? 'Sabor' : 'Escolha'}
+              </legend>
+
+              {saborizado ? (
+                // A grelha: os espetos lado a lado, para a escolha ser por
+                // comparação do que tem dentro, e não por leitura de nome.
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+                  {product.variants.map((v) => {
+                    const marcada = v.id === variant.id
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => setVariant(v)}
+                        aria-pressed={marcada}
+                        className={`group flex flex-col items-center rounded-lg border px-1.5 pb-2 pt-2.5 transition-colors ${
+                          marcada
+                            ? 'border-amarelo bg-amarelo/10'
+                            : 'border-borda hover:border-sal-fraco'
+                        }`}
+                      >
+                        <Espeto
+                          sabor={v.name}
+                          className={`h-14 w-auto transition-opacity ${
+                            marcada ? '' : 'opacity-60 group-hover:opacity-100'
+                          }`}
+                        />
+                        {/* A brasa acende sob o espeto escolhido. */}
+                        <span
+                          aria-hidden
+                          className={`mt-1.5 h-[3px] w-8 rounded-full transition-all ${
+                            marcada
+                              ? 'bg-amarelo shadow-[0_0_9px_1px_var(--color-amarelo)]'
+                              : 'bg-borda'
+                          }`}
+                        />
+                        <span
+                          className={`mt-2 text-center text-[0.68rem] leading-tight ${
+                            marcada ? 'font-semibold text-sal' : 'text-sal-fraco'
+                          }`}
+                        >
+                          {v.name}
+                        </span>
+                        <span
+                          className={`mt-1 text-[0.7rem] font-semibold tabular-nums ${
+                            marcada ? 'text-amarelo' : 'text-sal-fraco'
+                          }`}
+                        >
+                          {formatBRL(v.price_cents)}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => setVariant(v)}
+                      aria-pressed={v.id === variant.id}
+                      className={`rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors ${
+                        v.id === variant.id
+                          ? 'border-amarelo bg-amarelo/10 text-sal'
+                          : 'border-borda text-sal-fraco hover:border-sal-fraco'
+                      }`}
+                    >
+                      {v.name}
+                      <span className="ml-2 text-amarelo">
+                        {formatBRL(v.price_cents)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </fieldset>
           )}
 
           {product.option_groups.map((group) => {
             const marcadas = selection[group.id] ?? []
-            const ponto = isPonto(group.name)
             const faltando = tentou && group.min_select > marcadas.length
 
             return (
               <fieldset key={group.id} className="mb-7">
                 <legend className="mb-3 flex w-full items-center justify-between gap-3">
                   <span
-                    className={`etiqueta ${faltando ? 'text-mal' : 'text-sal-fraco'}`}
+                    className={`etiqueta ${faltando ? 'text-erro' : 'text-sal-fraco'}`}
                   >
                     {group.name}
                   </span>
                   <Regra group={group} />
                 </legend>
 
-                {ponto ? (
-                  // A régua: os pontos ficam lado a lado, do cru ao carvão, pra
-                  // escolha ser por comparação e não por adivinhar o nome.
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {group.options.map((o, i) => {
-                      const marcada = marcadas.includes(o.id)
-                      return (
-                        <button
-                          key={o.id}
-                          type="button"
-                          onClick={() => toggle(group, o.id)}
-                          aria-pressed={marcada}
-                          className="group flex flex-col items-center gap-2 rounded-lg py-1"
-                        >
-                          <span
-                            aria-hidden
-                            style={{ backgroundImage: corteDoPonto(i, group.options.length) }}
-                            className={`h-12 w-12 rounded-full transition-[transform,box-shadow] ${
-                              marcada
-                                ? 'scale-105 shadow-[0_0_0_2px_var(--color-carvao),0_0_0_4px_var(--color-brasa-viva)]'
-                                : 'opacity-70 group-hover:scale-105 group-hover:opacity-100'
-                            }`}
-                          />
-                          <span
-                            className={`text-center text-[0.65rem] leading-tight ${
-                              marcada ? 'font-semibold text-sal' : 'text-sal-fraco'
-                            }`}
-                          >
-                            {o.name}
+                <div className="flex flex-col gap-1.5">
+                  {group.options.map((o) => {
+                    const marcada = marcadas.includes(o.id)
+                    const cheio = !marcada && marcadas.length >= group.max_select
+                    return (
+                      <button
+                        key={o.id}
+                        type="button"
+                        onClick={() => toggle(group, o.id)}
+                        aria-pressed={marcada}
+                        disabled={cheio}
+                        className={`flex items-center justify-between rounded-lg border px-4 py-3 text-left text-sm transition-colors disabled:opacity-35 ${
+                          marcada
+                            ? 'border-amarelo bg-amarelo/10 text-sal'
+                            : 'border-borda text-sal-fraco hover:border-sal-fraco'
+                        }`}
+                      >
+                        <span className="font-medium">{o.name}</span>
+                        {o.price_cents > 0 && (
+                          <span className="text-amarelo">
+                            + {formatBRL(o.price_cents)}
                           </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-1.5">
-                    {group.options.map((o) => {
-                      const marcada = marcadas.includes(o.id)
-                      const cheio =
-                        !marcada && marcadas.length >= group.max_select
-                      return (
-                        <button
-                          key={o.id}
-                          type="button"
-                          onClick={() => toggle(group, o.id)}
-                          aria-pressed={marcada}
-                          disabled={cheio}
-                          className={`flex items-center justify-between rounded-lg border px-4 py-3 text-left text-sm transition-colors disabled:opacity-35 ${
-                            marcada
-                              ? 'border-brasa bg-brasa/12 text-sal'
-                              : 'border-borda text-sal-fraco hover:border-sal-fraco'
-                          }`}
-                        >
-                          <span className="font-medium">{o.name}</span>
-                          {o.price_cents > 0 && (
-                            <span className="text-brasa-viva">
-                              + {formatBRL(o.price_cents)}
-                            </span>
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
               </fieldset>
             )
           })}
@@ -300,7 +326,7 @@ export function ProductSheet({
 
         <div className="border-t border-borda px-5 py-4">
           {tentou && erro && (
-            <p role="alert" className="mb-3 text-center text-sm font-medium text-mal">
+            <p role="alert" className="mb-3 text-center text-sm font-medium text-erro">
               {erro}
             </p>
           )}
@@ -334,7 +360,7 @@ export function ProductSheet({
             <button
               type="button"
               onClick={adicionar}
-              className="flex h-11 flex-1 items-center justify-between rounded-lg bg-brasa px-4 font-semibold text-carvao transition-colors hover:bg-brasa-viva"
+              className="chanfro flex h-11 flex-1 items-center justify-between bg-vermelho px-4 font-semibold text-sal transition-colors hover:bg-brasa"
             >
               <span>Adicionar</span>
               <span className="tabular-nums">{formatBRL(total)}</span>

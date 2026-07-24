@@ -38,10 +38,10 @@ function Campo({
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!erro}
         className={`w-full rounded-lg border bg-carvao px-3.5 py-3 text-sm text-sal placeholder:text-sal-fraco/50 ${
-          erro ? 'border-mal' : 'border-borda'
+          erro ? 'border-erro' : 'border-borda'
         }`}
       />
-      {erro && <span className="mt-1 block text-xs text-mal">{erro}</span>}
+      {erro && <span className="mt-1 block text-xs text-erro">{erro}</span>}
     </label>
   )
 }
@@ -135,7 +135,7 @@ export function Checkout({ store }: { store: Store }) {
               value={cliente.nome}
               onChange={(v) => salvar({ nome: v })}
               erro={tentou ? erros.nome : undefined}
-              placeholder="Como te brasa-vivamos"
+              placeholder="Como te chamamos"
               autoComplete="name"
             />
             <Campo
@@ -267,7 +267,7 @@ export function Checkout({ store }: { store: Store }) {
           </div>
           <div className="flex justify-between border-t border-borda pt-2.5">
             <dt className="placa text-lg text-sal">Total</dt>
-            <dd className="placa text-lg tabular-nums text-brasa-viva">
+            <dd className="placa text-lg tabular-nums text-amarelo">
               {formatBRL(total)}
             </dd>
           </div>
@@ -277,12 +277,12 @@ export function Checkout({ store }: { store: Store }) {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-fumaca/95 backdrop-blur">
         <div className="mx-auto w-full max-w-2xl px-4 py-3.5">
           {falha && (
-            <p role="alert" className="mb-2.5 text-center text-sm font-medium text-mal">
+            <p role="alert" className="mb-2.5 text-center text-sm font-medium text-erro">
               {falha}
             </p>
           )}
           {tentou && !valido && !falha && (
-            <p role="alert" className="mb-2.5 text-center text-xs text-mal">
+            <p role="alert" className="mb-2.5 text-center text-xs text-erro">
               Confira os campos destacados acima.
             </p>
           )}
@@ -290,7 +290,7 @@ export function Checkout({ store }: { store: Store }) {
             type="button"
             onClick={enviar}
             disabled={enviando}
-            className="flex h-12 w-full items-center justify-between rounded-lg bg-brasa px-4 font-semibold text-carvao transition-colors hover:bg-brasa-viva disabled:opacity-60"
+            className="chanfro flex h-12 w-full items-center justify-between bg-vermelho px-4 font-semibold text-sal transition-colors hover:bg-brasa disabled:opacity-60"
           >
             <span>{enviando ? 'Enviando...' : 'Fazer pedido'}</span>
             <span className="tabular-nums">{formatBRL(total)}</span>

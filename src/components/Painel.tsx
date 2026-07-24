@@ -25,12 +25,13 @@ import {
 } from '@/lib/painel'
 import { Login } from './Login'
 
+// Cada estado precisa ser distinguível de relance, de longe, numa cozinha.
 const COR_STATUS: Record<OrderStatus, string> = {
-  recebido: 'bg-brasa-viva/15 text-brasa-viva',
-  em_preparo: 'bg-brasa/15 text-brasa',
-  saiu_entrega: 'bg-ponto/20 text-ponto',
+  recebido: 'bg-amarelo/20 text-amarelo', // o que exige ação agora
+  em_preparo: 'bg-brasa/20 text-brasa',
+  saiu_entrega: 'bg-sal/15 text-sal', // saiu da cozinha: sai do calor
   entregue: 'bg-borda text-sal-fraco',
-  cancelado: 'bg-mal/15 text-mal',
+  cancelado: 'bg-erro/15 text-erro',
 }
 
 function Cartao({
@@ -70,17 +71,15 @@ function Cartao({
                 {item.quantity}× {item.product_name}{' '}
                 <span className="font-normal text-sal-fraco">{item.variant_name}</span>
               </p>
+              {/* Toda escolha muda o preparo — nenhuma vale menos que a outra
+                  na hora de montar a marmita. */}
               {item.order_item_options.map((o, j) => (
                 <p key={j} className="text-xs text-sal-fraco">
-                  {o.group_name === 'Ponto da carne' ? (
-                    <span className="font-semibold text-ponto">{o.option_name}</span>
-                  ) : (
-                    o.option_name
-                  )}
+                  <span className="text-sal">{o.option_name}</span>
                 </p>
               ))}
               {item.notes && (
-                <p className="mt-0.5 text-xs italic text-brasa-viva">“{item.notes}”</p>
+                <p className="mt-0.5 text-xs italic text-amarelo">“{item.notes}”</p>
               )}
             </li>
           ))}
@@ -115,7 +114,7 @@ function Cartao({
               {ROTULO_PAGAMENTO[pedido.payment_method]}
             </span>
             {aguardandoPix && (
-              <span className="ml-1.5 text-brasa-viva">· aguardando</span>
+              <span className="ml-1.5 text-amarelo">· aguardando</span>
             )}
             {pedido.payment_status === 'confirmado' && (
               <span className="ml-1.5 text-sal-fraco">· pago</span>
@@ -147,7 +146,7 @@ function Cartao({
             <button
               type="button"
               onClick={() => onMudar(pedido.id, proximo)}
-              className="flex-1 rounded-lg bg-brasa px-3 py-2.5 text-sm font-semibold text-carvao transition-colors hover:bg-brasa-viva"
+              className="flex-1 rounded-lg bg-vermelho px-3 py-2.5 text-sm font-semibold text-sal transition-colors hover:bg-brasa"
             >
               {ACAO_STATUS[pedido.status]}
             </button>
@@ -160,7 +159,7 @@ function Cartao({
                   onMudar(pedido.id, 'cancelado')
                 }
               }}
-              className="rounded-lg border border-borda px-3 py-2.5 text-sm text-sal-fraco transition-colors hover:border-mal hover:text-mal"
+              className="rounded-lg border border-borda px-3 py-2.5 text-sm text-sal-fraco transition-colors hover:border-erro hover:text-erro"
             >
               Cancelar
             </button>
@@ -340,7 +339,7 @@ export function Painel() {
                     aria-hidden
                     className={`h-2 w-2 rounded-full ${
                       aberta
-                        ? 'bg-brasa-viva shadow-[0_0_8px_var(--color-brasa-viva)]'
+                        ? 'bg-amarelo shadow-[0_0_8px_var(--color-amarelo)]'
                         : 'bg-sal-fraco'
                     }`}
                   />
@@ -394,7 +393,7 @@ export function Painel() {
                   if (ok) tocarSino()
                 })
               }
-              className="etiqueta shrink-0 rounded bg-brasa px-3 py-2 text-carvao transition-colors hover:bg-brasa-viva"
+              className="etiqueta shrink-0 rounded bg-vermelho px-3 py-2 text-sal transition-colors hover:bg-brasa"
             >
               Ativar som
             </button>
@@ -404,7 +403,7 @@ export function Painel() {
         {erro && (
           <p
             role="alert"
-            className="mb-4 rounded-lg border border-mal/40 bg-mal/10 px-4 py-3 text-sm text-sal"
+            className="mb-4 rounded-lg border border-vermelho/40 bg-vermelho/10 px-4 py-3 text-sm text-sal"
           >
             {erro}
           </p>

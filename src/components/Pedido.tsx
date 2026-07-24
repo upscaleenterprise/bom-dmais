@@ -17,7 +17,7 @@ const TRILHA: { id: OrderStatus; rotulo: string }[] = [
 function Trilha({ status }: { status: OrderStatus }) {
   if (status === 'cancelado') {
     return (
-      <p className="rounded-lg border border-mal/40 bg-mal/10 px-4 py-3 text-sm text-sal">
+      <p className="rounded-lg border border-erro/40 bg-erro/10 px-4 py-3 text-sm text-sal">
         Este pedido foi cancelado. Fale com a churrascaria se não foi você.
       </p>
     )
@@ -39,7 +39,7 @@ function Trilha({ status }: { status: OrderStatus }) {
               aria-current={i === atual ? 'step' : undefined}
               className={`etiqueta mt-2 block text-[0.6rem] ${
                 i === atual
-                  ? 'text-brasa-viva'
+                  ? 'text-amarelo'
                   : feito
                     ? 'text-sal-fraco'
                     : 'text-sal-fraco/45'
@@ -94,7 +94,7 @@ function ChavePix({
             setCopiou(true)
             setTimeout(() => setCopiou(false), 2000)
           }}
-          className="etiqueta shrink-0 rounded bg-brasa px-2.5 py-1.5 text-carvao transition-colors hover:bg-brasa-viva"
+          className="etiqueta shrink-0 rounded bg-vermelho px-2.5 py-1.5 text-sal transition-colors hover:bg-brasa"
         >
           {copiou ? 'Copiado' : 'Copiar'}
         </button>
@@ -196,7 +196,7 @@ export function Pedido({
             </div>
             <div className="flex justify-between border-t border-borda pt-2">
               <dt className="placa text-lg text-sal">Total</dt>
-              <dd className="placa text-lg tabular-nums text-brasa-viva">
+              <dd className="placa text-lg tabular-nums text-amarelo">
                 {formatBRL(pedido.total_cents)}
               </dd>
             </div>

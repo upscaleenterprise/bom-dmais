@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 /*
-  A régua do ponto da carne é o sistema de cor do app.
-  Todo acento sai de um ponto dela: cru -> selado -> carvão.
-  Nada de cor decorativa que não venha da carne ou da brasa.
+  Carvão + amarelo + vermelho é a paleta de uma brasa acesa — e é a marca que o
+  cliente já reconhece do panfleto e da fachada.
+
+  Regra de uso, verificada em contraste.test.ts:
+  - amarelo (10.2:1 sobre carvão) serve para texto de qualquer tamanho;
+  - vermelho (3.5:1) é fundo de botão e texto grande, NUNCA rótulo pequeno.
 */
 @theme {
   --color-carvao: #17120f; /* chão: carvão quente, não preto neutro */
@@ -12,16 +15,17 @@
   --color-sal: #f4efe7; /* texto — sal grosso */
   --color-sal-fraco: #a2938a; /* texto secundário */
 
-  /* A régua do ponto: do cru ao carvão. */
-  --color-mal: #b8232b;
-  --color-mal-ponto: #c4432f;
-  --color-ponto: #cf6a38;
-  --color-ponto-bem: #a55330;
-  --color-bem: #6d3a26;
+  /* A marca. */
+  --color-amarelo: #f2b705; /* acento: preço, destaque, foco */
+  --color-vermelho: #c8321f; /* ação: fundo de botão, com texto claro */
+  --color-brasa: #e2521c; /* o fogo entre os dois — realce e estado ativo */
 
-  /* Brasa: o acento de ação, puxado do meio da régua e aceso. */
-  --color-brasa: #e2521c;
-  --color-brasa-viva: #f79420; /* gordura pingando, só para realce */
+  /*
+    O vermelho da marca dá 3.5:1 e não pode carregar texto pequeno — e mensagem
+    de erro é justamente onde a pessoa precisa ler. Este clareado dá 5.7:1 sobre
+    o carvão e 5.2:1 sobre os cartões.
+  */
+  --color-erro: #ef5f4a;
 
   --font-placa: var(--font-anton); /* placa de açougue */
   --font-corpo: var(--font-archivo);
@@ -38,7 +42,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* A placa é para dizer o nome da carne e o preço. Nunca para texto corrido. */
+/* A placa é para dizer o nome do produto e o preço. Nunca para texto corrido. */
 .placa {
   font-family: var(--font-placa), Impact, sans-serif;
   font-weight: 400;
@@ -56,6 +60,14 @@ body {
   font-size: 0.6875rem;
 }
 
+/*
+  Um canto chanfrado a 45°, nunca os quatro. Lê como corte e foge do
+  "tudo arredondado" de qualquer app de delivery.
+*/
+.chanfro {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -68,7 +80,7 @@ body {
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-brasa-viva);
+  outline: 2px solid var(--color-amarelo);
   outline-offset: 2px;
   border-radius: 2px;
 }

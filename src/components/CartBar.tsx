@@ -22,7 +22,7 @@ export function CartBar({ store }: { store: Store }) {
       <div className="mx-auto w-full max-w-3xl px-5 py-3.5">
         {!bate && (
           <p className="mb-2.5 text-center text-xs text-sal-fraco">
-            Faltam <span className="font-semibold text-brasa-viva">{formatBRL(falta)}</span>{' '}
+            Faltam <span className="font-semibold text-amarelo">{formatBRL(falta)}</span>{' '}
             para o pedido mínimo
           </p>
         )}
@@ -34,7 +34,7 @@ export function CartBar({ store }: { store: Store }) {
           onClick={(e) => !bate && e.preventDefault()}
           className={`flex h-12 items-center justify-between rounded-lg px-4 font-semibold transition-colors ${
             bate
-              ? 'bg-brasa text-carvao hover:bg-brasa-viva'
+              ? 'bg-vermelho text-sal hover:bg-brasa'
               : 'pointer-events-none cursor-not-allowed bg-borda text-sal-fraco'
           }`}
         >

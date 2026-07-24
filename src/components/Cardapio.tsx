@@ -47,7 +47,7 @@ function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
               aria-hidden
               className={`h-2 w-2 rounded-full ${
                 aberta
-                  ? 'bg-brasa-viva shadow-[0_0_10px_var(--color-brasa-viva)]'
+                  ? 'bg-amarelo shadow-[0_0_10px_var(--color-amarelo)]'
                   : 'bg-sal-fraco'
               }`}
             />
@@ -99,7 +99,7 @@ function ProductRow({
               {product.description}
             </p>
           )}
-          <p className="mt-2.5 text-sm font-semibold text-brasa-viva">
+          <p className="mt-2.5 text-sm font-semibold text-amarelo">
             {precoDe(product)}
           </p>
         </div>
