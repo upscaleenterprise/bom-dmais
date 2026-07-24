@@ -4,6 +4,7 @@ import {
   dentroDaJanela,
   emMinutos,
   estadoDaLoja,
+  estadoParaODono,
   formatarHora,
   horaNaLoja,
   recadoDeFechado,
@@ -89,6 +90,39 @@ test('o interruptor do dono fecha mesmo dentro do horário', () => {
 test('o interruptor ligado não abre fora do horário', () => {
   const e = estadoDaLoja({ ...base, agora: asUTC('2026-07-16T12:00:00Z') })
   assert.equal(e.aberta, false)
+})
+
+test('o painel do dono distingue "fora do horário" de "eu fechei"', () => {
+  // Os dois recusam pedido, mas exigem reação diferente: num caso é só esperar,
+  // no outro o dono precisa religar a chave.
+  const dentro = estadoParaODono({ ...base, agora: asUTC('2026-07-16T23:00:00Z') })
+  assert.equal(dentro.rotulo, 'Recebendo')
+  assert.equal(dentro.recebendo, true)
+
+  const fora = estadoParaODono({ ...base, agora: asUTC('2026-07-16T12:00:00Z') })
+  assert.equal(fora.rotulo, 'Fora do horário')
+  assert.equal(fora.recebendo, false)
+  assert.match(fora.explicacao, /sozinha às 19h/)
+
+  const fechada = estadoParaODono({
+    ...base,
+    isOpen: false,
+    agora: asUTC('2026-07-16T23:00:00Z'),
+  })
+  assert.equal(fechada.rotulo, 'Fechada')
+  assert.equal(fechada.recebendo, false)
+  assert.match(fechada.explicacao, /Você fechou/)
+})
+
+test('o painel nunca diz "Recebendo" quando o pedido seria recusado', () => {
+  // A regressão que este teste existe para pegar: o botão mostrava "Aberta"
+  // às 9h da manhã porque só olhava a chave manual, e o dono achava que
+  // estava vendendo.
+  for (const horaUTC of ['12:00', '18:00', '02:00', '22:00']) {
+    const e = estadoParaODono({ ...base, agora: asUTC(`2026-07-16T${horaUTC}:00Z`) })
+    const aceita = estadoDaLoja({ ...base, agora: asUTC(`2026-07-16T${horaUTC}:00Z`) }).aberta
+    assert.equal(e.recebendo, aceita, `às ${horaUTC} UTC`)
+  }
 })
 
 test('o recado diz quando voltar, não só que está fechado', () => {

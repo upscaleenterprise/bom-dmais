@@ -86,3 +86,43 @@ export function recadoDeFechado(estado: EstadoLoja, abre: string): string | null
     ? `Abrimos às ${formatarHora(abre)}`
     : 'Fechado no momento'
 }
+
+/**
+ * O que o painel mostra para o dono — que é outra pergunta da que o cliente faz.
+ *
+ * O cliente quer saber se pode pedir. O dono precisa saber se está recebendo
+ * pedido AGORA, e por que não, se não estiver. Um painel escrito "Aberta" com a
+ * loja recusando pedido por horário é pior que não informar nada.
+ */
+export function estadoParaODono(params: {
+  isOpen: boolean
+  opensAt: string
+  closesAt: string
+  timezone: string
+  agora: Date
+}): { rotulo: string; recebendo: boolean; explicacao: string } {
+  const estado = estadoDaLoja(params)
+
+  if (estado.aberta) {
+    return {
+      rotulo: 'Recebendo',
+      recebendo: true,
+      explicacao: `Aberta até ${formatarHora(params.closesAt)}`,
+    }
+  }
+
+  if (estado.motivo === 'fora_do_horario') {
+    return {
+      rotulo: 'Fora do horário',
+      recebendo: false,
+      // A chave está ligada: quando der a hora, abre sozinha.
+      explicacao: `Abre sozinha às ${formatarHora(params.opensAt)}`,
+    }
+  }
+
+  return {
+    rotulo: 'Fechada',
+    recebendo: false,
+    explicacao: 'Você fechou a loja',
+  }
+}

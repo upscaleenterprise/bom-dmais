@@ -14,6 +14,7 @@ import {
   pedidosNovos,
   proximoStatus,
 } from '@/lib/fluxo'
+import { estadoParaODono } from '@/lib/horario'
 import { liberarSom, tocarSino } from '@/lib/sino'
 import { usePreferencias } from '@/lib/preferencias'
 import {
@@ -24,6 +25,13 @@ import {
   type PedidoPainel,
 } from '@/lib/painel'
 import { Login } from './Login'
+
+type Loja = {
+  is_open: boolean
+  opens_at: string
+  closes_at: string
+  timezone: string
+}
 
 // Cada estado precisa ser distinguível de relance, de longe, numa cozinha.
 const COR_STATUS: Record<OrderStatus, string> = {
@@ -175,7 +183,7 @@ export function Painel() {
   const [carregandoSessao, setCarregandoSessao] = useState(true)
   const [pedidos, setPedidos] = useState<PedidoPainel[]>([])
   const [aba, setAba] = useState<'ativos' | 'finalizados'>('ativos')
-  const [aberta, setAberta] = useState<boolean | null>(null)
+  const [loja, setLoja] = useState<Loja | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [agora, setAgora] = useState(() => Date.now())
   const mudo = usePreferencias((s) => s.mudo)
@@ -226,10 +234,10 @@ export function Painel() {
 
     supabase
       .from('stores')
-      .select('is_open')
+      .select('is_open, opens_at, closes_at, timezone')
       .eq('slug', STORE_SLUG)
       .single()
-      .then(({ data }) => setAberta(data?.is_open ?? null))
+      .then(({ data }) => setLoja(data as Loja | null))
 
     // Realtime só entrega o evento porque o dono tem SELECT via RLS. Para o
     // cliente anônimo isso não funcionaria — e é por isso que lá é consulta.
@@ -287,6 +295,18 @@ export function Painel() {
 
   if (!session) return <Login />
 
+  // Recalculado a cada tick de `agora`, então às 23h o rótulo vira sozinho sem
+  // ninguém recarregar a página.
+  const estadoLoja = loja
+    ? estadoParaODono({
+        isOpen: loja.is_open,
+        opensAt: loja.opens_at,
+        closesAt: loja.closes_at,
+        timezone: loja.timezone,
+        agora: new Date(agora),
+      })
+    : null
+
   const ativos = pedidos.filter((p) => ATIVOS.includes(p.status))
   const finalizados = pedidos.filter((p) => !ATIVOS.includes(p.status))
   const lista = aba === 'ativos' ? ativos : finalizados
@@ -323,28 +343,34 @@ export function Painel() {
                 </span>
               </button>
 
-              {aberta !== null && (
+              {estadoLoja && loja && (
                 <button
                   type="button"
                   onClick={() =>
                     agir(async () => {
-                      await definirLojaAberta(!aberta)
-                      setAberta(!aberta)
+                      await definirLojaAberta(!loja.is_open)
+                      setLoja({ ...loja, is_open: !loja.is_open })
                     })
                   }
-                  aria-pressed={aberta}
-                  className="flex items-center gap-2 rounded-full border border-borda px-3 py-1.5 transition-colors hover:border-sal-fraco"
+                  aria-pressed={loja.is_open}
+                  title={estadoLoja.explicacao}
+                  className="flex items-center gap-2 rounded-full border border-borda px-3 py-1.5 text-left transition-colors hover:border-sal-fraco"
                 >
                   <span
                     aria-hidden
-                    className={`h-2 w-2 rounded-full ${
-                      aberta
+                    className={`h-2 w-2 shrink-0 rounded-full ${
+                      estadoLoja.recebendo
                         ? 'bg-amarelo shadow-[0_0_8px_var(--color-amarelo)]'
                         : 'bg-sal-fraco'
                     }`}
                   />
-                  <span className="etiqueta text-sal">
-                    {aberta ? 'Aberta' : 'Fechada'}
+                  <span className="leading-tight">
+                    <span className="etiqueta block text-sal">{estadoLoja.rotulo}</span>
+                    {/* O porquê importa: "fora do horário" o dono só espera;
+                        "fechada" ele precisa religar a chave. */}
+                    <span className="block text-[0.6rem] text-sal-fraco">
+                      {estadoLoja.explicacao}
+                    </span>
                   </span>
                 </button>
               )}
