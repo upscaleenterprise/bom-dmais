@@ -25,6 +25,7 @@ import {
   type PedidoPainel,
 } from '@/lib/painel'
 import { Login } from './Login'
+import { EditorCardapio } from './EditorCardapio'
 
 type Loja = {
   is_open: boolean
@@ -182,7 +183,7 @@ export function Painel() {
   const [session, setSession] = useState<Session | null>(null)
   const [carregandoSessao, setCarregandoSessao] = useState(true)
   const [pedidos, setPedidos] = useState<PedidoPainel[]>([])
-  const [aba, setAba] = useState<'ativos' | 'finalizados'>('ativos')
+  const [aba, setAba] = useState<'ativos' | 'finalizados' | 'cardapio'>('ativos')
   const [loja, setLoja] = useState<Loja | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [agora, setAgora] = useState(() => Date.now())
@@ -386,7 +387,7 @@ export function Painel() {
           </div>
 
           <div className="mt-3 flex gap-1">
-            {(['ativos', 'finalizados'] as const).map((id) => (
+            {(['ativos', 'finalizados', 'cardapio'] as const).map((id) => (
               <button
                 key={id}
                 type="button"
@@ -398,7 +399,11 @@ export function Painel() {
                     : 'text-sal-fraco hover:text-sal'
                 }`}
               >
-                {id === 'ativos' ? `Ativos · ${ativos.length}` : 'Finalizados'}
+                {id === 'ativos'
+                  ? `Ativos · ${ativos.length}`
+                  : id === 'finalizados'
+                    ? 'Finalizados'
+                    : 'Cardápio'}
               </button>
             ))}
           </div>
@@ -435,7 +440,9 @@ export function Painel() {
           </p>
         )}
 
-        {lista.length === 0 ? (
+        {aba === 'cardapio' ? (
+          <EditorCardapio />
+        ) : lista.length === 0 ? (
           <div className="py-24 text-center">
             <p className="placa text-2xl text-sal">
               {aba === 'ativos' ? 'Nenhum pedido na fila' : 'Nada finalizado ainda'}
