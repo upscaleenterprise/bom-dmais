@@ -24,13 +24,13 @@ export function Carrinho({ store }: { store: Store }) {
       <>
         <Topo titulo="Carrinho" voltarPara="/" />
         <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-5 px-5 py-24 text-center">
-          <p className="placa text-2xl text-sal">Seu carrinho está vazio</p>
-          <p className="max-w-xs text-sm text-sal-fraco">
+          <p className="placa text-2xl text-tinta">Seu carrinho está vazio</p>
+          <p className="max-w-xs text-sm text-tinta-fraca">
             Escolha uma carne, diga o ponto e a gente coloca na brasa.
           </p>
           <Link
             href="/"
-            className="mt-1 rounded-lg bg-vermelho px-5 py-3 font-semibold text-sal transition-colors hover:bg-brasa"
+            className="mt-1 rounded-lg bg-amarelo px-5 py-3 font-semibold text-tinta transition-colors hover:bg-laranja"
           >
             Ver o cardápio
           </Link>
@@ -52,18 +52,18 @@ export function Carrinho({ store }: { store: Store }) {
             <li key={item.lineId} className="py-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <h2 className="placa text-base leading-tight text-sal">
+                  <h2 className="placa text-base leading-tight text-tinta">
                     {item.productName}
                   </h2>
-                  <p className="mt-0.5 text-xs text-sal-fraco">{item.variantName}</p>
+                  <p className="mt-0.5 text-xs text-tinta-fraca">{item.variantName}</p>
 
                   {item.options.length > 0 && (
                     <ul className="mt-2 space-y-0.5">
                       {item.options.map((o) => (
-                        <li key={o.optionId} className="text-xs text-sal-fraco">
+                        <li key={o.optionId} className="text-xs text-tinta-fraca">
                           {o.optionName}
                           {o.priceCents > 0 && (
-                            <span className="text-amarelo">
+                            <span className="text-tinta">
                               {' '}
                               + {formatBRL(o.priceCents)}
                             </span>
@@ -74,13 +74,13 @@ export function Carrinho({ store }: { store: Store }) {
                   )}
 
                   {item.notes && (
-                    <p className="mt-2 border-l-2 border-borda pl-2 text-xs italic text-sal-fraco">
+                    <p className="mt-2 border-l-2 border-borda pl-2 text-xs italic text-tinta-fraca">
                       {item.notes}
                     </p>
                   )}
                 </div>
 
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-sal">
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-tinta">
                   {formatBRL(lineTotal(item))}
                 </span>
               </div>
@@ -91,18 +91,18 @@ export function Carrinho({ store }: { store: Store }) {
                     type="button"
                     onClick={() => setQuantity(item.lineId, item.quantity - 1)}
                     aria-label={`Menos um ${item.productName}`}
-                    className="grid h-9 w-9 place-items-center text-sal-fraco hover:text-sal"
+                    className="grid h-9 w-9 place-items-center text-tinta-fraca hover:text-tinta"
                   >
                     −
                   </button>
-                  <span className="w-6 text-center text-sm font-semibold tabular-nums text-sal">
+                  <span className="w-6 text-center text-sm font-semibold tabular-nums text-tinta">
                     {item.quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity(item.lineId, item.quantity + 1)}
                     aria-label={`Mais um ${item.productName}`}
-                    className="grid h-9 w-9 place-items-center text-sal-fraco hover:text-sal"
+                    className="grid h-9 w-9 place-items-center text-tinta-fraca hover:text-tinta"
                   >
                     +
                   </button>
@@ -111,7 +111,7 @@ export function Carrinho({ store }: { store: Store }) {
                 <button
                   type="button"
                   onClick={() => remove(item.lineId)}
-                  className="etiqueta text-sal-fraco underline-offset-4 hover:text-erro hover:underline"
+                  className="etiqueta text-tinta-fraca underline-offset-4 hover:text-erro hover:underline"
                 >
                   Remover
                 </button>
@@ -122,37 +122,37 @@ export function Carrinho({ store }: { store: Store }) {
 
         <Link
           href="/"
-          className="etiqueta mt-6 inline-block text-brasa underline-offset-4 hover:underline"
+          className="etiqueta mt-6 inline-block text-tinta underline underline-offset-4"
         >
           + Adicionar mais itens
         </Link>
 
         <dl className="mt-8 space-y-2.5 border-t border-borda pt-5 text-sm">
           <div className="flex justify-between">
-            <dt className="text-sal-fraco">Subtotal</dt>
-            <dd className="tabular-nums text-sal">{formatBRL(subtotal)}</dd>
+            <dt className="text-tinta-fraca">Subtotal</dt>
+            <dd className="tabular-nums text-tinta">{formatBRL(subtotal)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-sal-fraco">Entrega</dt>
-            <dd className="tabular-nums text-sal">
+            <dt className="text-tinta-fraca">Entrega</dt>
+            <dd className="tabular-nums text-tinta">
               {formatBRL(store.delivery_fee_cents)}
             </dd>
           </div>
           <div className="flex justify-between border-t border-borda pt-2.5">
-            <dt className="placa text-lg text-sal">Total</dt>
-            <dd className="placa text-lg tabular-nums text-amarelo">
+            <dt className="placa text-lg text-tinta">Total</dt>
+            <dd className="preco text-2xl leading-none text-tinta">
               {formatBRL(total)}
             </dd>
           </div>
         </dl>
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-fumaca/95 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-superficie/95 backdrop-blur">
         <div className="mx-auto w-full max-w-2xl px-4 py-3.5">
           {!bate && (
-            <p className="mb-2.5 text-center text-xs text-sal-fraco">
+            <p className="mb-2.5 text-center text-xs text-tinta-fraca">
               Faltam{' '}
-              <span className="font-semibold text-amarelo">
+              <span className="font-semibold text-erro">
                 {formatBRL(store.min_order_cents - subtotal)}
               </span>{' '}
               para o pedido mínimo
@@ -164,8 +164,8 @@ export function Carrinho({ store }: { store: Store }) {
             tabIndex={bate ? undefined : -1}
             className={`flex h-12 items-center justify-between rounded-lg px-4 font-semibold transition-colors ${
               bate
-                ? 'bg-vermelho text-sal hover:bg-brasa'
-                : 'pointer-events-none bg-borda text-sal-fraco'
+                ? 'bg-amarelo text-tinta hover:bg-laranja'
+                : 'pointer-events-none bg-borda text-tinta-fraca'
             }`}
           >
             <span>Continuar</span>

@@ -1,71 +1,78 @@
 @import "tailwindcss";
 
 /*
-  Carvão + amarelo + vermelho é a paleta de uma brasa acesa — e é a marca que o
-  cliente já reconhece do panfleto e da fachada.
+  Identidade do manual da marca (Churrasquinho bom d+.pdf), com as cores
+  medidas por pixel das páginas do PDF — nada estimado.
 
-  Regra de uso, verificada em contraste.test.ts:
-  - amarelo (10.2:1 sobre carvão) serve para texto de qualquer tamanho;
-  - vermelho (3.5:1) é fundo de botão e texto grande, NUNCA rótulo pequeno.
+  Regras de uso, verificadas em contraste.test.ts:
+  - amarelo (1.6:1 sobre branco) é decorativo: nunca carrega texto sozinho.
+    No logo ele sempre vem com contorno escuro — aqui, sempre com texto tinta.
+  - coral e laranja passam só como componente de UI e texto grande (≥3:1);
+    texto pequeno colorido usa tinta, cinza ou erro.
+  - CTA primário: fundo amarelo + texto tinta (10.7:1) — a dupla do logotipo.
 */
 @theme {
-  --color-carvao: #17120f; /* chão: carvão quente, não preto neutro */
-  --color-fumaca: #221a16; /* superfície elevada */
-  --color-borda: #3a2c24;
-  --color-sal: #f4efe7; /* texto — sal grosso */
-  --color-sal-fraco: #a2938a; /* texto secundário */
+  --color-fundo: #ffffff; /* o branco do cardápio impresso */
+  --color-superficie: #faf3e5; /* creme quente para cartões e barras */
+  --color-borda: #ebdfc7;
+  --color-tinta: #241824; /* o quase-preto do contorno do logo */
+  --color-tinta-fraca: #585959; /* o cinza dos itens do cardápio impresso */
 
-  /* A marca. */
-  --color-amarelo: #f2b705; /* acento: preço, destaque, foco */
-  --color-vermelho: #c8321f; /* ação: fundo de botão, com texto claro */
-  --color-brasa: #e2521c; /* o fogo entre os dois — realce e estado ativo */
+  /* A marca, medida do PDF. */
+  --color-amarelo: #fcc600; /* logotipo, mascote, asteriscos */
+  --color-coral: #f0665f; /* slogan "aqui é mais gostoso!", scooter */
+  --color-laranja: #e2672b; /* painel de foto do cardápio */
+  --color-erro: #c23428; /* coral escurecido até passar AA em texto pequeno */
 
-  /*
-    O vermelho da marca dá 3.5:1 e não pode carregar texto pequeno — e mensagem
-    de erro é justamente onde a pessoa precisa ler. Este clareado dá 5.7:1 sobre
-    o carvão e 5.2:1 sobre os cartões.
-  */
-  --color-erro: #ef5f4a;
-
-  --font-placa: var(--font-anton); /* placa de açougue */
-  --font-corpo: var(--font-archivo);
+  --font-placa: var(--font-baloo); /* títulos arredondados do cardápio */
+  --font-corpo: var(--font-nunito);
+  --font-preco: var(--font-caveat); /* preço manuscrito, como no impresso */
 }
 
 html {
-  background: var(--color-carvao);
+  background: var(--color-fundo);
 }
 
 body {
-  background: var(--color-carvao);
-  color: var(--color-sal);
+  background: var(--color-fundo);
+  color: var(--color-tinta);
   font-family: var(--font-corpo), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* A placa é para dizer o nome do produto e o preço. Nunca para texto corrido. */
+/* Títulos no espírito das seções do cardápio impresso: redondos e cheios. */
 .placa {
-  font-family: var(--font-placa), Impact, sans-serif;
-  font-weight: 400;
+  font-family: var(--font-placa), system-ui, sans-serif;
+  font-weight: 800;
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
-/* Etiqueta: o Archivo tem eixo de largura, então rótulo é condensado de verdade. */
+/* Rótulos pequenos em caixa alta. */
 .etiqueta {
   font-family: var(--font-corpo), sans-serif;
-  font-variation-settings: "wdth" 87;
-  font-weight: 600;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   font-size: 0.6875rem;
 }
 
 /*
-  Um canto chanfrado a 45°, nunca os quatro. Lê como corte e foge do
-  "tudo arredondado" de qualquer app de delivery.
+  O preço do cardápio impresso é manuscrito e sublinhado — reproduzido aqui.
+  Caveat corre pequeno, então o tamanho sobe um degrau onde for usado.
 */
-.chanfro {
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+.preco {
+  font-family: var(--font-preco), cursive;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+/* O padrão de asteriscos amarelos da capa do manual, bem sutil. */
+.asteriscos {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg transform='translate(36 36)' fill='%23FCC600'%3E%3Crect x='-4' y='-16' width='8' height='32' rx='2'/%3E%3Crect x='-4' y='-16' width='8' height='32' rx='2' transform='rotate(90)'/%3E%3Crect x='-4' y='-16' width='8' height='32' rx='2' transform='rotate(45)'/%3E%3Crect x='-4' y='-16' width='8' height='32' rx='2' transform='rotate(-45)'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -80,7 +87,8 @@ body {
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-amarelo);
+  /* Amarelo sobre branco dá 1.6:1 — invisível. O laranja passa (3.4:1). */
+  outline: 2px solid var(--color-laranja);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: 4px;
 }

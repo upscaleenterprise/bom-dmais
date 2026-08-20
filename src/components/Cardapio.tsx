@@ -19,24 +19,25 @@ function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
   const recado = recadoDeFechado(estado, store.opens_at)
 
   return (
-    <header className="relative overflow-hidden border-b border-borda bg-fumaca">
-      {/* A brasa vive atrás do nome. Sem animação: o brilho já é o suficiente. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-24 left-1/2 h-56 w-[42rem] -translate-x-1/2 opacity-45 blur-3xl"
-        style={{
-          background:
-            'radial-gradient(ellipse at center, var(--color-brasa) 0%, transparent 68%)',
-        }}
-      />
+    <header className="relative overflow-hidden border-b border-borda bg-fundo">
+      {/* O padrão de asteriscos da capa do manual da marca, bem discreto. */}
+      <div aria-hidden className="asteriscos pointer-events-none absolute inset-0 opacity-[0.08]" />
 
-      <div className="relative mx-auto w-full max-w-3xl px-5 pb-6 pt-9">
-        <h1 className="placa text-[clamp(2.4rem,9vw,4rem)] leading-[0.86] text-sal">
-          {store.name}
-        </h1>
+      <div className="relative mx-auto w-full max-w-3xl px-5 pb-6 pt-6">
+        {/* O logotipo é imagem: o arco amarelo com contorno e o slogan não se
+            reproduzem em texto. O h1 continua existindo para leitor de tela. */}
+        <h1 className="sr-only">{store.name}</h1>
+        <Image
+          src="/marca/lockup.png"
+          alt=""
+          width={264}
+          height={194}
+          priority
+          className="h-auto w-48 sm:w-56"
+        />
 
         {store.description && (
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-sal-fraco">
+          <p className="mt-3 max-w-sm text-sm font-semibold leading-relaxed text-tinta-fraca">
             {store.description}
           </p>
         )}
@@ -47,25 +48,25 @@ function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
               aria-hidden
               className={`h-2 w-2 rounded-full ${
                 aberta
-                  ? 'bg-amarelo shadow-[0_0_10px_var(--color-amarelo)]'
-                  : 'bg-sal-fraco'
+                  ? 'bg-laranja shadow-[0_0_10px_var(--color-laranja)]'
+                  : 'bg-tinta-fraca'
               }`}
             />
             {/* Fechado sem dizer quando volta faz a pessoa desistir de vez. */}
-            <span className="etiqueta text-sal">{aberta ? 'Aberto agora' : recado}</span>
+            <span className="etiqueta text-tinta">{aberta ? 'Aberto agora' : recado}</span>
           </span>
 
-          <span className="etiqueta text-sal-fraco">
+          <span className="etiqueta text-tinta-fraca">
             Todo dia, {formatarHora(store.opens_at)} às {formatarHora(store.closes_at)}
           </span>
 
-          <span className="etiqueta text-sal-fraco">
+          <span className="etiqueta text-tinta-fraca">
             Entrega {formatBRL(store.delivery_fee_cents)}
           </span>
 
           {/* Sem pedido mínimo, "Mínimo R$ 0,00" é ruído. */}
           {store.min_order_cents > 0 && (
-            <span className="etiqueta text-sal-fraco">
+            <span className="etiqueta text-tinta-fraca">
               Mínimo {formatBRL(store.min_order_cents)}
             </span>
           )}
@@ -90,16 +91,16 @@ function ProductRow({
         type="button"
         onClick={onPick}
         disabled={disabled}
-        className="group flex w-full items-start gap-4 border-b border-borda/60 px-5 py-5 text-left transition-colors hover:bg-fumaca/60 disabled:cursor-not-allowed disabled:opacity-45"
+        className="group flex w-full items-start gap-4 border-b border-borda/60 px-5 py-5 text-left transition-colors hover:bg-superficie/60 disabled:cursor-not-allowed disabled:opacity-45"
       >
         <div className="min-w-0 flex-1">
-          <h3 className="placa text-lg leading-tight text-sal">{product.name}</h3>
+          <h3 className="placa text-lg leading-tight text-tinta">{product.name}</h3>
           {product.description && (
-            <p className="mt-1.5 text-sm leading-relaxed text-sal-fraco">
+            <p className="mt-1.5 text-sm leading-relaxed text-tinta-fraca">
               {product.description}
             </p>
           )}
-          <p className="mt-2.5 text-sm font-semibold text-amarelo">
+          <p className="preco mt-1.5 text-xl leading-none text-tinta">
             {precoDe(product)}
           </p>
         </div>
@@ -122,7 +123,7 @@ function ProductRow({
             />
             <span
               aria-hidden
-              className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-full border border-borda bg-fumaca text-lg leading-none text-sal-fraco transition-colors group-hover:border-brasa group-hover:bg-brasa group-hover:text-carvao"
+              className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-full border border-borda bg-superficie text-lg leading-none text-tinta-fraca transition-colors group-hover:border-laranja group-hover:bg-laranja group-hover:text-tinta"
             >
               +
             </span>
@@ -130,7 +131,7 @@ function ProductRow({
         ) : (
           <span
             aria-hidden
-            className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-borda text-xl leading-none text-sal-fraco transition-colors group-hover:border-brasa group-hover:bg-brasa group-hover:text-carvao"
+            className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-borda text-xl leading-none text-tinta-fraca transition-colors group-hover:border-laranja group-hover:bg-laranja group-hover:text-tinta"
           >
             +
           </span>
@@ -178,14 +179,14 @@ export function Cardapio({
 
       <nav
         aria-label="Categorias"
-        className="sticky top-0 z-20 border-b border-borda bg-carvao/95 backdrop-blur"
+        className="sticky top-0 z-20 border-b border-borda bg-fundo/95 backdrop-blur"
       >
         <ul className="mx-auto flex w-full max-w-3xl gap-1 overflow-x-auto px-3 py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]{display:none}">
           {categories.map((c) => (
             <li key={c.id}>
               <a
                 href={`#cat-${c.id}`}
-                className="etiqueta block whitespace-nowrap rounded-full px-3.5 py-2 text-sal-fraco transition-colors hover:bg-fumaca hover:text-sal"
+                className="etiqueta block whitespace-nowrap rounded-full px-3.5 py-2 text-tinta-fraca transition-colors hover:bg-superficie hover:text-tinta"
               >
                 {c.name}
               </a>
@@ -197,7 +198,7 @@ export function Cardapio({
       <main className="mx-auto w-full max-w-3xl flex-1 pb-32">
         {categories.map((category) => (
           <section key={category.id} id={`cat-${category.id}`} className="scroll-mt-14">
-            <h2 className="etiqueta sticky top-14 z-10 bg-carvao/95 px-5 py-3 text-brasa backdrop-blur">
+            <h2 className="etiqueta sticky top-14 z-10 bg-fundo/95 px-5 py-3 text-tinta backdrop-blur">
               {category.name}
             </h2>
             <ul>

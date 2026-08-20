@@ -11,8 +11,8 @@ export function qrSvg(conteudo: string): Promise<string> {
     errorCorrectionLevel: 'M', // suficiente para tela; 'H' engorda o desenho à toa
     margin: 1,
     color: {
-      dark: '#17120F', // carvão: o QR é impresso sobre o claro
-      light: '#F4EFE7', // sal
+      dark: '#241824', // a tinta do contorno do logo
+      light: '#FFFFFF', // leitor de QR quer fundo branco de verdade
     },
   })
 }

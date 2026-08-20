@@ -38,12 +38,12 @@ function Chave({
         }`}
       >
         <span
-          className={`absolute top-0.5 h-4 w-4 rounded-full bg-carvao transition-all ${
+          className={`absolute top-0.5 h-4 w-4 rounded-full bg-fundo transition-all ${
             ligado ? 'left-4' : 'left-0.5'
           }`}
         />
       </span>
-      <span className={`etiqueta ${ligado ? 'text-sal' : 'text-sal-fraco'}`}>
+      <span className={`etiqueta ${ligado ? 'text-tinta' : 'text-tinta-fraca'}`}>
         {ligado ? rotuloLigado : rotuloDesligado}
       </span>
     </button>
@@ -93,9 +93,9 @@ function PrecoVariacao({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-sal-fraco">{variante.name}</span>
+      <span className="text-sm text-tinta-fraca">{variante.name}</span>
       <div className="relative">
-        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-sal-fraco">
+        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-tinta-fraca">
           R$
         </span>
         <input
@@ -106,10 +106,10 @@ function PrecoVariacao({
           onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
           disabled={salvando}
           aria-label={`Preço de ${variante.name}`}
-          className="w-24 rounded-lg border border-borda bg-carvao py-1.5 pl-8 pr-2 text-right text-sm tabular-nums text-sal disabled:opacity-50"
+          className="w-24 rounded-lg border border-borda bg-fundo py-1.5 pl-8 pr-2 text-right text-sm tabular-nums text-tinta disabled:opacity-50"
         />
       </div>
-      {salvo && <span className="etiqueta text-amarelo">Salvo</span>}
+      {salvo && <span className="etiqueta text-tinta">Salvo</span>}
     </div>
   )
 }
@@ -140,19 +140,19 @@ function ProdutoEditor({
 
   return (
     <article
-      className={`rounded-xl border border-borda bg-fumaca p-4 transition-opacity ${
+      className={`rounded-xl border border-borda bg-superficie p-4 transition-opacity ${
         disponivel ? '' : 'opacity-60'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <h4 className="placa text-lg leading-tight text-sal">{produto.name}</h4>
+        <h4 className="placa text-lg leading-tight text-tinta">{produto.name}</h4>
         <span className={pendente ? 'opacity-50' : ''}>
           <Chave ligado={disponivel} onToggle={toggle} />
         </span>
       </div>
 
       {produto.description && (
-        <p className="mt-1 text-sm text-sal-fraco">{produto.description}</p>
+        <p className="mt-1 text-sm text-tinta-fraca">{produto.description}</p>
       )}
 
       <div className="mt-3 space-y-2 border-t border-borda/60 pt-3">
@@ -176,30 +176,30 @@ export function EditorCardapio() {
 
   if (erro && !cats) {
     return (
-      <p className="rounded-lg border border-erro/40 bg-erro/10 px-4 py-3 text-sm text-sal">
+      <p className="rounded-lg border border-erro/40 bg-erro/10 px-4 py-3 text-sm text-tinta">
         {erro}
       </p>
     )
   }
 
-  if (!cats) return <p className="text-sm text-sal-fraco">Carregando o cardápio...</p>
+  if (!cats) return <p className="text-sm text-tinta-fraca">Carregando o cardápio...</p>
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-sal-fraco">
+      <p className="text-sm text-tinta-fraca">
         Mudou o preço? Digite e saia do campo — salva sozinho. Acabou um item? É
         só desligar; ele some do cardápio na hora e volta quando você religar.
       </p>
 
       {erro && (
-        <p role="alert" className="rounded-lg border border-erro/40 bg-erro/10 px-4 py-3 text-sm text-sal">
+        <p role="alert" className="rounded-lg border border-erro/40 bg-erro/10 px-4 py-3 text-sm text-tinta">
           {erro}
         </p>
       )}
 
       {cats.map((cat) => (
         <section key={cat.id}>
-          <h3 className="etiqueta mb-3 text-brasa">{cat.name}</h3>
+          <h3 className="etiqueta mb-3 text-tinta">{cat.name}</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             {cat.products.map((p) => (
               <ProdutoEditor key={p.id} produto={p} onErro={setErro} />

@@ -31,13 +31,13 @@ function Campo({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>) {
   return (
     <label className="block">
-      <span className="etiqueta mb-1.5 block text-sal-fraco">{label}</span>
+      <span className="etiqueta mb-1.5 block text-tinta-fraca">{label}</span>
       <input
         {...props}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!erro}
-        className={`w-full rounded-lg border bg-carvao px-3.5 py-3 text-sm text-sal placeholder:text-sal-fraco/50 ${
+        className={`w-full rounded-lg border bg-fundo px-3.5 py-3 text-sm text-tinta placeholder:text-tinta-fraca/50 ${
           erro ? 'border-erro' : 'border-borda'
         }`}
       />
@@ -128,7 +128,7 @@ export function Checkout({ store }: { store: Store }) {
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-40 pt-5">
         <section className="mb-8">
-          <h2 className="etiqueta mb-3 text-brasa">Quem vai receber</h2>
+          <h2 className="etiqueta mb-3 text-tinta">Quem vai receber</h2>
           <div className="space-y-3">
             <Campo
               label="Nome"
@@ -151,7 +151,7 @@ export function Checkout({ store }: { store: Store }) {
         </section>
 
         <section className="mb-8">
-          <h2 className="etiqueta mb-3 text-brasa">Endereço da entrega</h2>
+          <h2 className="etiqueta mb-3 text-tinta">Endereço da entrega</h2>
           <div className="space-y-3">
             <div className="grid grid-cols-[1fr_5.5rem] gap-3">
               <Campo
@@ -193,7 +193,7 @@ export function Checkout({ store }: { store: Store }) {
         </section>
 
         <section className="mb-8">
-          <h2 className="etiqueta mb-3 text-brasa">Pagamento</h2>
+          <h2 className="etiqueta mb-3 text-tinta">Pagamento</h2>
           <div className="grid grid-cols-3 gap-2">
             {PAGAMENTOS.map((p) => (
               <button
@@ -203,12 +203,12 @@ export function Checkout({ store }: { store: Store }) {
                 aria-pressed={pagamento === p.id}
                 className={`rounded-lg border px-3 py-3 text-left transition-colors ${
                   pagamento === p.id
-                    ? 'border-brasa bg-brasa/12'
-                    : 'border-borda hover:border-sal-fraco'
+                    ? 'border-laranja bg-laranja/12'
+                    : 'border-borda hover:border-tinta-fraca'
                 }`}
               >
-                <span className="block text-sm font-semibold text-sal">{p.nome}</span>
-                <span className="mt-0.5 block text-[0.65rem] leading-tight text-sal-fraco">
+                <span className="block text-sm font-semibold text-tinta">{p.nome}</span>
+                <span className="mt-0.5 block text-[0.65rem] leading-tight text-tinta-fraca">
                   {p.nota}
                 </span>
               </button>
@@ -229,7 +229,7 @@ export function Checkout({ store }: { store: Store }) {
           )}
 
           {pagamento === 'pix' && (
-            <p className="mt-3 rounded-lg border border-borda bg-fumaca px-3.5 py-3 text-xs leading-relaxed text-sal-fraco">
+            <p className="mt-3 rounded-lg border border-borda bg-superficie px-3.5 py-3 text-xs leading-relaxed text-tinta-fraca">
               A chave Pix aparece na próxima tela. O pedido entra na cozinha assim
               que a churrascaria confirmar o pagamento.
             </p>
@@ -238,7 +238,7 @@ export function Checkout({ store }: { store: Store }) {
 
         <section className="mb-8">
           <label className="block">
-            <span className="etiqueta mb-1.5 block text-sal-fraco">
+            <span className="etiqueta mb-1.5 block text-tinta-fraca">
               Observação do pedido
             </span>
             <textarea
@@ -247,34 +247,34 @@ export function Checkout({ store }: { store: Store }) {
               rows={2}
               maxLength={200}
               placeholder="Interfone quebrado, ligar ao chegar"
-              className="w-full resize-none rounded-lg border border-borda bg-carvao px-3.5 py-3 text-sm text-sal placeholder:text-sal-fraco/50"
+              className="w-full resize-none rounded-lg border border-borda bg-fundo px-3.5 py-3 text-sm text-tinta placeholder:text-tinta-fraca/50"
             />
           </label>
         </section>
 
         <dl className="space-y-2.5 border-t border-borda pt-5 text-sm">
           <div className="flex justify-between">
-            <dt className="text-sal-fraco">
+            <dt className="text-tinta-fraca">
               Subtotal · {items.length} {items.length === 1 ? 'item' : 'itens'}
             </dt>
-            <dd className="tabular-nums text-sal">{formatBRL(subtotal)}</dd>
+            <dd className="tabular-nums text-tinta">{formatBRL(subtotal)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-sal-fraco">Entrega</dt>
-            <dd className="tabular-nums text-sal">
+            <dt className="text-tinta-fraca">Entrega</dt>
+            <dd className="tabular-nums text-tinta">
               {formatBRL(store.delivery_fee_cents)}
             </dd>
           </div>
           <div className="flex justify-between border-t border-borda pt-2.5">
-            <dt className="placa text-lg text-sal">Total</dt>
-            <dd className="placa text-lg tabular-nums text-amarelo">
+            <dt className="placa text-lg text-tinta">Total</dt>
+            <dd className="preco text-2xl leading-none text-tinta">
               {formatBRL(total)}
             </dd>
           </div>
         </dl>
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-fumaca/95 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-superficie/95 backdrop-blur">
         <div className="mx-auto w-full max-w-2xl px-4 py-3.5">
           {falha && (
             <p role="alert" className="mb-2.5 text-center text-sm font-medium text-erro">
@@ -290,7 +290,7 @@ export function Checkout({ store }: { store: Store }) {
             type="button"
             onClick={enviar}
             disabled={enviando}
-            className="chanfro flex h-12 w-full items-center justify-between bg-vermelho px-4 font-semibold text-sal transition-colors hover:bg-brasa disabled:opacity-60"
+            className="rounded-xl flex h-12 w-full items-center justify-between bg-amarelo px-4 font-semibold text-tinta transition-colors hover:bg-laranja disabled:opacity-60"
           >
             <span>{enviando ? 'Enviando...' : 'Fazer pedido'}</span>
             <span className="tabular-nums">{formatBRL(total)}</span>

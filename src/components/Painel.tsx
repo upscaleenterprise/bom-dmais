@@ -35,11 +35,13 @@ type Loja = {
 }
 
 // Cada estado precisa ser distinguível de relance, de longe, numa cozinha.
+// O fundo colorido diferencia; o texto é sempre legível (tinta ou erro —
+// amarelo e laranja não seguram texto deste tamanho sobre fundo claro).
 const COR_STATUS: Record<OrderStatus, string> = {
-  recebido: 'bg-amarelo/20 text-amarelo', // o que exige ação agora
-  em_preparo: 'bg-brasa/20 text-brasa',
-  saiu_entrega: 'bg-sal/15 text-sal', // saiu da cozinha: sai do calor
-  entregue: 'bg-borda text-sal-fraco',
+  recebido: 'bg-amarelo/40 text-tinta', // o que exige ação agora
+  em_preparo: 'bg-laranja/25 text-tinta',
+  saiu_entrega: 'bg-tinta/10 text-tinta', // saiu da cozinha: sai do calor
+  entregue: 'bg-borda text-tinta-fraca',
   cancelado: 'bg-erro/15 text-erro',
 }
 
@@ -59,11 +61,11 @@ function Cartao({
     pedido.payment_method === 'pix' && pedido.payment_status === 'aguardando'
 
   return (
-    <article className="flex flex-col rounded-xl border border-borda bg-fumaca">
+    <article className="flex flex-col rounded-xl border border-borda bg-superficie">
       <header className="flex items-center justify-between gap-3 border-b border-borda px-4 py-3">
         <div className="flex items-baseline gap-2.5">
-          <h3 className="placa text-xl leading-none text-sal">{pedido.code}</h3>
-          <span className="text-xs text-sal-fraco">
+          <h3 className="placa text-xl leading-none text-tinta">{pedido.code}</h3>
+          <span className="text-xs text-tinta-fraca">
             {haQuantoTempo(pedido.created_at, agora)}
           </span>
         </div>
@@ -76,26 +78,26 @@ function Cartao({
         <ul className="space-y-2">
           {pedido.order_items.map((item, i) => (
             <li key={i}>
-              <p className="text-sm font-semibold text-sal">
+              <p className="text-sm font-semibold text-tinta">
                 {item.quantity}× {item.product_name}{' '}
-                <span className="font-normal text-sal-fraco">{item.variant_name}</span>
+                <span className="font-normal text-tinta-fraca">{item.variant_name}</span>
               </p>
               {/* Toda escolha muda o preparo — nenhuma vale menos que a outra
                   na hora de montar a marmita. */}
               {item.order_item_options.map((o, j) => (
-                <p key={j} className="text-xs text-sal-fraco">
-                  <span className="text-sal">{o.option_name}</span>
+                <p key={j} className="text-xs text-tinta-fraca">
+                  <span className="text-tinta">{o.option_name}</span>
                 </p>
               ))}
               {item.notes && (
-                <p className="mt-0.5 text-xs italic text-amarelo">“{item.notes}”</p>
+                <p className="mt-0.5 text-xs italic text-erro">“{item.notes}”</p>
               )}
             </li>
           ))}
         </ul>
 
-        <div className="border-t border-borda/60 pt-3 text-xs leading-relaxed text-sal-fraco">
-          <p className="font-semibold text-sal">{pedido.customer_name}</p>
+        <div className="border-t border-borda/60 pt-3 text-xs leading-relaxed text-tinta-fraca">
+          <p className="font-semibold text-tinta">{pedido.customer_name}</p>
           <p>
             {pedido.address_street}, {pedido.address_number}
             {pedido.address_complement && ` — ${pedido.address_complement}`}
@@ -106,12 +108,12 @@ function Cartao({
             href={`https://wa.me/55${pedido.customer_phone.replace(/\D/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 inline-block text-brasa underline-offset-2 hover:underline"
+            className="mt-1 inline-block text-tinta underline underline-offset-2"
           >
             {pedido.customer_phone}
           </a>
           {pedido.notes && (
-            <p className="mt-2 border-l-2 border-brasa pl-2 italic text-sal">
+            <p className="mt-2 border-l-2 border-laranja pl-2 italic text-tinta">
               {pedido.notes}
             </p>
           )}
@@ -119,22 +121,22 @@ function Cartao({
 
         <div className="flex items-center justify-between border-t border-borda/60 pt-3">
           <div className="text-xs">
-            <span className="text-sal-fraco">
+            <span className="text-tinta-fraca">
               {ROTULO_PAGAMENTO[pedido.payment_method]}
             </span>
             {aguardandoPix && (
-              <span className="ml-1.5 text-amarelo">· aguardando</span>
+              <span className="ml-1.5 text-erro">· aguardando</span>
             )}
             {pedido.payment_status === 'confirmado' && (
-              <span className="ml-1.5 text-sal-fraco">· pago</span>
+              <span className="ml-1.5 text-tinta-fraca">· pago</span>
             )}
             {pedido.change_for_cents !== null && (
-              <span className="ml-1.5 text-sal-fraco">
+              <span className="ml-1.5 text-tinta-fraca">
                 · troco p/ {formatBRL(pedido.change_for_cents)}
               </span>
             )}
           </div>
-          <span className="placa text-lg leading-none text-sal">
+          <span className="placa text-lg leading-none text-tinta">
             {formatBRL(pedido.total_cents)}
           </span>
         </div>
@@ -146,7 +148,7 @@ function Cartao({
             <button
               type="button"
               onClick={() => onConfirmar(pedido.id)}
-              className="flex-1 rounded-lg border border-brasa px-3 py-2.5 text-sm font-semibold text-brasa transition-colors hover:bg-brasa hover:text-carvao"
+              className="flex-1 rounded-lg border border-laranja px-3 py-2.5 text-sm font-semibold text-tinta transition-colors hover:bg-laranja"
             >
               Confirmar Pix
             </button>
@@ -155,7 +157,7 @@ function Cartao({
             <button
               type="button"
               onClick={() => onMudar(pedido.id, proximo)}
-              className="flex-1 rounded-lg bg-vermelho px-3 py-2.5 text-sm font-semibold text-sal transition-colors hover:bg-brasa"
+              className="flex-1 rounded-lg bg-amarelo px-3 py-2.5 text-sm font-semibold text-tinta transition-colors hover:bg-laranja"
             >
               {ACAO_STATUS[pedido.status]}
             </button>
@@ -168,7 +170,7 @@ function Cartao({
                   onMudar(pedido.id, 'cancelado')
                 }
               }}
-              className="rounded-lg border border-borda px-3 py-2.5 text-sm text-sal-fraco transition-colors hover:border-erro hover:text-erro"
+              className="rounded-lg border border-borda px-3 py-2.5 text-sm text-tinta-fraca transition-colors hover:border-erro hover:text-erro"
             >
               Cancelar
             </button>
@@ -289,7 +291,7 @@ export function Painel() {
   if (carregandoSessao) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-sal-fraco">Carregando...</p>
+        <p className="text-sm text-tinta-fraca">Carregando...</p>
       </main>
     )
   }
@@ -314,10 +316,10 @@ export function Painel() {
 
   return (
     <>
-      <header className="sticky top-0 z-20 border-b border-borda bg-carvao/95 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-borda bg-fundo/95 backdrop-blur">
         <div className="mx-auto w-full max-w-5xl px-4 py-3">
           <div className="flex items-center justify-between gap-4">
-            <h1 className="placa text-2xl leading-none text-sal">Painel</h1>
+            <h1 className="placa text-2xl leading-none text-tinta">Painel</h1>
 
             <div className="flex items-center gap-3">
               <button
@@ -336,7 +338,7 @@ export function Painel() {
                 }}
                 aria-pressed={!mudo}
                 title={mudo ? 'Som desligado' : 'Som ligado'}
-                className="grid h-8 w-8 place-items-center rounded-full border border-borda text-sm transition-colors hover:border-sal-fraco"
+                className="grid h-8 w-8 place-items-center rounded-full border border-borda text-sm transition-colors hover:border-tinta-fraca"
               >
                 <span aria-hidden>{mudo ? '🔇' : '🔔'}</span>
                 <span className="sr-only">
@@ -355,21 +357,21 @@ export function Painel() {
                   }
                   aria-pressed={loja.is_open}
                   title={estadoLoja.explicacao}
-                  className="flex items-center gap-2 rounded-full border border-borda px-3 py-1.5 text-left transition-colors hover:border-sal-fraco"
+                  className="flex items-center gap-2 rounded-full border border-borda px-3 py-1.5 text-left transition-colors hover:border-tinta-fraca"
                 >
                   <span
                     aria-hidden
                     className={`h-2 w-2 shrink-0 rounded-full ${
                       estadoLoja.recebendo
-                        ? 'bg-amarelo shadow-[0_0_8px_var(--color-amarelo)]'
-                        : 'bg-sal-fraco'
+                        ? 'bg-laranja shadow-[0_0_8px_var(--color-laranja)]'
+                        : 'bg-tinta-fraca'
                     }`}
                   />
                   <span className="leading-tight">
-                    <span className="etiqueta block text-sal">{estadoLoja.rotulo}</span>
+                    <span className="etiqueta block text-tinta">{estadoLoja.rotulo}</span>
                     {/* O porquê importa: "fora do horário" o dono só espera;
                         "fechada" ele precisa religar a chave. */}
-                    <span className="block text-[0.6rem] text-sal-fraco">
+                    <span className="block text-[0.6rem] text-tinta-fraca">
                       {estadoLoja.explicacao}
                     </span>
                   </span>
@@ -379,7 +381,7 @@ export function Painel() {
               <button
                 type="button"
                 onClick={() => supabase.auth.signOut()}
-                className="etiqueta text-sal-fraco underline-offset-4 hover:text-sal hover:underline"
+                className="etiqueta text-tinta-fraca underline-offset-4 hover:text-tinta hover:underline"
               >
                 Sair
               </button>
@@ -395,8 +397,8 @@ export function Painel() {
                 aria-pressed={aba === id}
                 className={`etiqueta rounded-full px-3.5 py-2 transition-colors ${
                   aba === id
-                    ? 'bg-fumaca text-sal'
-                    : 'text-sal-fraco hover:text-sal'
+                    ? 'bg-superficie text-tinta'
+                    : 'text-tinta-fraca hover:text-tinta'
                 }`}
               >
                 {id === 'ativos'
@@ -412,8 +414,8 @@ export function Painel() {
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-5">
         {!somPronto && !mudo && (
-          <div className="mb-4 flex items-center justify-between gap-4 rounded-lg border border-brasa/40 bg-brasa/8 px-4 py-3">
-            <p className="text-sm text-sal">
+          <div className="mb-4 flex items-center justify-between gap-4 rounded-lg border border-laranja/40 bg-laranja/8 px-4 py-3">
+            <p className="text-sm text-tinta">
               O navegador bloqueou o som. Sem ele, pedido novo entra calado.
             </p>
             <button
@@ -424,7 +426,7 @@ export function Painel() {
                   if (ok) tocarSino()
                 })
               }
-              className="etiqueta shrink-0 rounded bg-vermelho px-3 py-2 text-sal transition-colors hover:bg-brasa"
+              className="etiqueta shrink-0 rounded bg-amarelo px-3 py-2 text-tinta transition-colors hover:bg-laranja"
             >
               Ativar som
             </button>
@@ -434,7 +436,7 @@ export function Painel() {
         {erro && (
           <p
             role="alert"
-            className="mb-4 rounded-lg border border-vermelho/40 bg-vermelho/10 px-4 py-3 text-sm text-sal"
+            className="mb-4 rounded-lg border border-erro/40 bg-erro/10 px-4 py-3 text-sm text-tinta"
           >
             {erro}
           </p>
@@ -444,10 +446,10 @@ export function Painel() {
           <EditorCardapio />
         ) : lista.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="placa text-2xl text-sal">
+            <p className="placa text-2xl text-tinta">
               {aba === 'ativos' ? 'Nenhum pedido na fila' : 'Nada finalizado ainda'}
             </p>
-            <p className="mt-2 text-sm text-sal-fraco">
+            <p className="mt-2 text-sm text-tinta-fraca">
               {aba === 'ativos'
                 ? 'Pedido novo aparece aqui sozinho, sem atualizar a página.'
                 : 'Pedidos entregues e cancelados ficam neste histórico.'}

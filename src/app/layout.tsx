@@ -1,38 +1,46 @@
 import type { Metadata, Viewport } from 'next'
-import { Anton, Archivo } from 'next/font/google'
+import { Baloo_2, Caveat, Nunito } from 'next/font/google'
 import './globals.css'
 
-// Anton: a placa do açougue. Pesada, condensada, sem meio-termo.
-const anton = Anton({
-  weight: '400',
+// As três vozes do cardápio impresso: título arredondado, texto limpo e
+// preço manuscrito. Famílias do Google mais próximas do material da marca.
+const baloo = Baloo_2({
   subsets: ['latin'],
-  variable: '--font-anton',
+  weight: ['600', '700', '800'],
+  variable: '--font-baloo',
   display: 'swap',
 })
 
-// Archivo é variável no eixo de largura — dá etiqueta condensada de verdade,
-// em vez de fingir estreitando com letter-spacing.
-const archivo = Archivo({
+const nunito = Nunito({
   subsets: ['latin'],
-  variable: '--font-archivo',
-  axes: ['wdth'],
+  variable: '--font-nunito',
+  display: 'swap',
+})
+
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-caveat',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: 'Churrasquinho Bom D+',
-  description: 'Carne no ponto, entregue quente.',
+  description: 'Aqui é mais gostoso! Espetinho na brasa com acompanhamento.',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#17120f',
+  themeColor: '#ffffff',
 }
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR" className={`${anton.variable} ${archivo.variable} h-full`}>
+    <html
+      lang="pt-BR"
+      className={`${baloo.variable} ${nunito.variable} ${caveat.variable} h-full`}
+    >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   )

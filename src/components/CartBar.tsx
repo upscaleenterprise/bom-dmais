@@ -18,11 +18,11 @@ export function CartBar({ store }: { store: Store }) {
   const falta = store.min_order_cents - subtotal
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-fumaca/95 backdrop-blur">
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-borda bg-superficie/95 backdrop-blur">
       <div className="mx-auto w-full max-w-3xl px-5 py-3.5">
         {!bate && (
-          <p className="mb-2.5 text-center text-xs text-sal-fraco">
-            Faltam <span className="font-semibold text-amarelo">{formatBRL(falta)}</span>{' '}
+          <p className="mb-2.5 text-center text-xs text-tinta-fraca">
+            Faltam <span className="font-semibold text-erro">{formatBRL(falta)}</span>{' '}
             para o pedido mínimo
           </p>
         )}
@@ -34,12 +34,12 @@ export function CartBar({ store }: { store: Store }) {
           onClick={(e) => !bate && e.preventDefault()}
           className={`flex h-12 items-center justify-between rounded-lg px-4 font-semibold transition-colors ${
             bate
-              ? 'bg-vermelho text-sal hover:bg-brasa'
-              : 'pointer-events-none cursor-not-allowed bg-borda text-sal-fraco'
+              ? 'bg-amarelo text-tinta hover:bg-laranja'
+              : 'pointer-events-none cursor-not-allowed bg-borda text-tinta-fraca'
           }`}
         >
           <span className="flex items-center gap-2.5">
-            <span className="grid h-6 min-w-6 place-items-center rounded-full bg-carvao/25 px-1.5 text-xs tabular-nums">
+            <span className="grid h-6 min-w-6 place-items-center rounded-full bg-tinta/15 px-1.5 text-xs tabular-nums">
               {count}
             </span>
             Ver carrinho
