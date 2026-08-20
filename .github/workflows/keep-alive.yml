@@ -1,0 +1,36 @@
+# Mantém o Supabase (plano free) acordado.
+#
+# O plano gratuito pausa o banco após ~7 dias sem nenhuma consulta, e o site
+# sai do ar até um restore manual. Movimento real (pedidos toda noite) já
+# impede isso — este robô só cobre o período em que o site está no ar mas
+# ainda sem clientes.
+#
+# A home é dinâmica e busca o cardápio do Supabase a cada acesso, então um
+# simples GET na página conta como uso do banco. Roda a cada 3 dias: bem dentro
+# da janela de 7, com folga se um agendamento atrasar.
+#
+# IMPORTANTE: isto PREVINE a pausa, não a reverte. Se o banco já pausou, o
+# restore é manual no dashboard do Supabase.
+
+name: keep-alive
+
+on:
+  schedule:
+    - cron: "0 12 */3 * *" # a cada 3 dias, meio-dia UTC (9h em São Luís)
+  workflow_dispatch: {} # permite disparar na mão para testar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acessar a home (acorda Vercel + Supabase)
+        run: |
+          echo "Pingando o site para manter o banco ativo..."
+          code=$(curl -s -o /dev/null -w "%{http_code}" --retry 3 --retry-delay 10 --max-time 40 https://bom-dmais.vercel.app/)
+          echo "HTTP $code"
+          # 200 = ok. Qualquer coisa que responda já contou como uso; só falho
+          # se a página nem carregou (erro de rede), para o run não mentir.
+          if [ -z "$code" ] || [ "$code" = "000" ]; then
+            echo "Site não respondeu."
+            exit 1
+          fi
