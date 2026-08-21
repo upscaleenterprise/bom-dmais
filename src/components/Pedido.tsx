@@ -196,7 +196,7 @@ export function Pedido({
             </div>
             <div className="flex justify-between border-t border-borda pt-2">
               <dt className="placa text-lg text-tinta">Total</dt>
-              <dd className="preco text-2xl leading-none text-tinta">
+              <dd className="preco text-xl leading-none text-tinta">
                 {formatBRL(pedido.total_cents)}
               </dd>
             </div>

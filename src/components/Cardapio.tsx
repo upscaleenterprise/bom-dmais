@@ -33,7 +33,7 @@ function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
           width={264}
           height={194}
           priority
-          className="h-auto w-48 sm:w-56"
+          className="h-auto w-36 sm:w-40"
         />
 
         {store.description && (
@@ -100,7 +100,7 @@ function ProductRow({
               {product.description}
             </p>
           )}
-          <p className="preco mt-1.5 text-xl leading-none text-tinta">
+          <p className="preco mt-2 text-lg leading-none text-tinta">
             {precoDe(product)}
           </p>
         </div>

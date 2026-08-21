@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Baloo_2, Caveat, Nunito } from 'next/font/google'
+import { Baloo_2, Nunito } from 'next/font/google'
 import './globals.css'
 
 // As três vozes do cardápio impresso: título arredondado, texto limpo e
@@ -14,13 +14,6 @@ const baloo = Baloo_2({
 const nunito = Nunito({
   subsets: ['latin'],
   variable: '--font-nunito',
-  display: 'swap',
-})
-
-const caveat = Caveat({
-  subsets: ['latin'],
-  weight: ['600', '700'],
-  variable: '--font-caveat',
   display: 'swap',
 })
 
@@ -39,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${baloo.variable} ${nunito.variable} ${caveat.variable} h-full`}
+      className={`${baloo.variable} ${nunito.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

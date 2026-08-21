@@ -267,7 +267,7 @@ export function Checkout({ store }: { store: Store }) {
           </div>
           <div className="flex justify-between border-t border-borda pt-2.5">
             <dt className="placa text-lg text-tinta">Total</dt>
-            <dd className="preco text-2xl leading-none text-tinta">
+            <dd className="preco text-xl leading-none text-tinta">
               {formatBRL(total)}
             </dd>
           </div>

@@ -26,7 +26,6 @@
 
   --font-placa: var(--font-baloo); /* títulos arredondados do cardápio */
   --font-corpo: var(--font-nunito);
-  --font-preco: var(--font-caveat); /* preço manuscrito, como no impresso */
 }
 
 html {
@@ -57,16 +56,12 @@ body {
   font-size: 0.6875rem;
 }
 
-/*
-  O preço do cardápio impresso é manuscrito e sublinhado — reproduzido aqui.
-  Caveat corre pequeno, então o tamanho sobe um degrau onde for usado.
-*/
+/* O preço destaca por peso, na mesma família do corpo — casa com o site. */
 .preco {
-  font-family: var(--font-preco), cursive;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1.5px;
+  font-family: var(--font-corpo), sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 /* O padrão de asteriscos amarelos da capa do manual, bem sutil. */
