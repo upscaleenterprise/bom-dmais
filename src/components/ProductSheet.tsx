@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import type { OptionGroup, Product, Variant } from '@/lib/types'
 import { formatBRL } from '@/lib/money'
-import { firstError } from '@/lib/selection'
+import { alternarSelecao, firstError, opcaoBloqueada } from '@/lib/selection'
 import { temEspeto } from '@/lib/sabor'
 import { Espeto } from './Espeto'
 import { useCart } from '@/lib/cart'
@@ -89,23 +89,10 @@ export function ProductSheet({
     }) * quantity
 
   function toggle(group: OptionGroup, optionId: string) {
-    setSelection((prev) => {
-      const atual = prev[group.id] ?? []
-      const jaTem = atual.includes(optionId)
-
-      if (group.max_select === 1) {
-        // Grupo de escolha única: clicar troca. Clicar no mesmo não desmarca
-        // quando é obrigatório — desmarcar só deixaria o pedido inválido.
-        if (jaTem && group.min_select > 0) return prev
-        return { ...prev, [group.id]: jaTem ? [] : [optionId] }
-      }
-
-      if (jaTem) {
-        return { ...prev, [group.id]: atual.filter((id) => id !== optionId) }
-      }
-      if (atual.length >= group.max_select) return prev
-      return { ...prev, [group.id]: [...atual, optionId] }
-    })
+    setSelection((prev) => ({
+      ...prev,
+      [group.id]: alternarSelecao(group, prev[group.id] ?? [], optionId),
+    }))
   }
 
   function adicionar() {
@@ -282,7 +269,7 @@ export function ProductSheet({
                 <div className="flex flex-col gap-1.5">
                   {group.options.map((o) => {
                     const marcada = marcadas.includes(o.id)
-                    const cheio = !marcada && marcadas.length >= group.max_select
+                    const cheio = opcaoBloqueada(group, marcada, marcadas.length)
                     return (
                       <button
                         key={o.id}
