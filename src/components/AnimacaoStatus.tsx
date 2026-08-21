@@ -20,7 +20,7 @@ export function AnimacaoStatus({ status }: { status: OrderStatus }) {
   return (
     <div
       aria-hidden
-      className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-2xl border border-borda shadow-sm"
+      className="mx-auto w-full max-w-40 overflow-hidden rounded-xl border border-borda shadow-sm"
     >
       <div className="as-root">
         {/* Gradientes compartilhados pelas cenas (rosto, céu, brasa). */}
