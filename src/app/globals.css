@@ -88,3 +88,49 @@ body {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* Animações do acompanhamento do pedido (AnimacaoStatus): uma cena por status,
+   desenhadas pelo dono. A arte (SVG) vive em cenasStatus.ts; aqui só o palco e
+   os keyframes que ela referencia. */
+.as-root {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 6 / 5;
+  overflow: hidden;
+}
+.as-scene {
+  position: absolute;
+  inset: 0;
+  animation: sceneIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.as-scene > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes sceneIn { 0% { opacity: 0; transform: translateY(16px) scale(0.985) } 100% { opacity: 1; transform: translateY(0) scale(1) } }
+@keyframes swayR { 0%, 100% { transform: rotate(-3.2deg) } 50% { transform: rotate(3.2deg) } }
+@keyframes bobY { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+@keyframes breathe { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.035) } }
+@keyframes checkPop { 0%, 40% { transform: scale(0); opacity: 0 } 52% { transform: scale(1.25); opacity: 1 } 64%, 100% { transform: scale(1); opacity: 1 } }
+@keyframes penTap { 0%, 100% { transform: rotate(-7deg) } 50% { transform: rotate(4deg) } }
+@keyframes ember { 0%, 100% { opacity: .7; transform: scale(.96) } 50% { opacity: 1; transform: scale(1.06) } }
+@keyframes smoke { 0% { transform: translateY(6px) scale(.6); opacity: 0 } 18% { opacity: .5 } 100% { transform: translateY(-64px) scale(1.5); opacity: 0 } }
+@keyframes flame { 0%, 100% { transform: scaleY(.9) translateY(2px) } 50% { transform: scaleY(1.22) translateY(-3px) } }
+@keyframes flip { 0%, 100% { transform: rotate(0) } 50% { transform: rotate(-13deg) } }
+@keyframes spin { to { transform: rotate(360deg) } }
+@keyframes roadMove { to { transform: translateX(-72px) } }
+@keyframes bounceMoto { 0%, 100% { transform: translateY(0) rotate(-.5deg) } 50% { transform: translateY(-4px) rotate(.5deg) } }
+@keyframes puff { 0% { opacity: .55; transform: translateX(0) scale(.5) } 100% { opacity: 0; transform: translateX(-34px) scale(1.4) } }
+@keyframes dashFly { 0% { opacity: 0; transform: translateX(20px) } 30% { opacity: .8 } 100% { opacity: 0; transform: translateX(-40px) } }
+@keyframes celebrate { 0%, 100% { transform: translateY(0) rotate(-2.5deg) } 50% { transform: translateY(-11px) rotate(2.5deg) } }
+@keyframes handWave { 0%, 100% { transform: scale(1) rotate(-6deg) } 50% { transform: scale(1.1) rotate(6deg) } }
+@keyframes confetti { 0% { transform: translateY(-14px) rotate(0); opacity: 0 } 12% { opacity: 1 } 100% { transform: translateY(210px) rotate(340deg); opacity: 0 } }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.3) } 50% { opacity: 1; transform: scale(1) } }
+
+@media (prefers-reduced-motion: reduce) {
+  .as-scene * {
+    animation-duration: 6s !important;
+  }
+}

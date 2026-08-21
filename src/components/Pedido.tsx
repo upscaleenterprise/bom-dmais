@@ -5,6 +5,7 @@ import type { OrderStatus } from '@/lib/types'
 import type { PedidoJson } from '@/lib/order'
 import { formatBRL } from '@/lib/money'
 import { supabase } from '@/lib/supabase'
+import { AnimacaoStatus } from './AnimacaoStatus'
 import { Topo } from './Topo'
 
 // Recebido → (Na brasa) → Saiu → Entregue. O "Na brasa" aparece sempre na
@@ -136,6 +137,9 @@ export function Pedido({
       <Topo titulo="Pedido" voltarPara="/" />
 
       <main className="mx-auto w-full max-w-2xl flex-1 space-y-7 px-4 pb-16 pt-5">
+        {/* A cena diz o status "de barriga" — o cliente entende antes de ler. */}
+        <AnimacaoStatus status={pedido.status} />
+
         <section>
           {/* O topo já diz "Pedido". Aqui o rótulo informa o que o número É:
               o código que o cliente fala no telefone. */}
