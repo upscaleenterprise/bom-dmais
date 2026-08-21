@@ -23,7 +23,7 @@ function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
       {/* O padrão de asteriscos da capa do manual da marca, bem discreto. */}
       <div aria-hidden className="asteriscos pointer-events-none absolute inset-0 opacity-[0.08]" />
 
-      <div className="relative mx-auto w-full max-w-3xl px-5 pb-6 pt-6">
+      <div className="relative mx-auto flex w-full max-w-3xl flex-col items-center px-5 pb-6 pt-6 text-center">
         {/* O logotipo é imagem: o arco amarelo com contorno e o slogan não se
             reproduzem em texto. O h1 continua existindo para leitor de tela. */}
         <h1 className="sr-only">{store.name}</h1>
@@ -33,16 +33,16 @@ function StoreHeader({ store, aberta }: { store: Store; aberta: boolean }) {
           width={264}
           height={194}
           priority
-          className="h-auto w-36 sm:w-40"
+          className="h-auto w-40 sm:w-44"
         />
 
         {store.description && (
-          <p className="mt-3 max-w-sm text-sm font-semibold leading-relaxed text-tinta-fraca">
+          <p className="mt-3 max-w-md text-sm font-semibold leading-relaxed text-tinta-fraca">
             {store.description}
           </p>
         )}
 
-        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
           <span className="flex items-center gap-2">
             <span
               aria-hidden
