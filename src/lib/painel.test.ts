@@ -2,10 +2,15 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { proximoStatus, haQuantoTempo, pedidosNovos, ATIVOS } from './fluxo.ts'
 
-test('o fluxo do pedido só anda pra frente', () => {
-  assert.equal(proximoStatus('recebido'), 'em_preparo')
-  assert.equal(proximoStatus('em_preparo'), 'saiu_entrega')
+test('fluxo enxuto: recebido pula direto pra saiu pra entrega', () => {
+  // "Na brasa" (em_preparo) saiu do caminho — o dono não clica 3x por pedido.
+  assert.equal(proximoStatus('recebido'), 'saiu_entrega')
   assert.equal(proximoStatus('saiu_entrega'), 'entregue')
+})
+
+test('um pedido legado em em_preparo ainda sabe avançar', () => {
+  // O estado não é mais gerado, mas não pode travar quem já estivesse nele.
+  assert.equal(proximoStatus('em_preparo'), 'saiu_entrega')
 })
 
 test('pedido finalizado não tem próximo passo', () => {

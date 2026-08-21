@@ -7,9 +7,9 @@ import { formatBRL } from '@/lib/money'
 import { supabase } from '@/lib/supabase'
 import { Topo } from './Topo'
 
+// Três passos, como o painel do dono: Recebido → Saiu → Entregue.
 const TRILHA: { id: OrderStatus; rotulo: string }[] = [
   { id: 'recebido', rotulo: 'Recebido' },
-  { id: 'em_preparo', rotulo: 'Na brasa' },
   { id: 'saiu_entrega', rotulo: 'Saiu pra entrega' },
   { id: 'entregue', rotulo: 'Entregue' },
 ]

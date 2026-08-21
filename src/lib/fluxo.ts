@@ -4,10 +4,17 @@ import type { OrderStatus, PaymentMethod } from './types'
 
 export const ATIVOS: OrderStatus[] = ['recebido', 'em_preparo', 'saiu_entrega']
 
-/** O próximo passo do pedido, ou null se já acabou. */
+/**
+ * O próximo passo do pedido, ou null se já acabou.
+ *
+ * Fluxo enxuto para churrasquinho: Recebido → Saiu pra entrega → Entregue.
+ * O "em_preparo" (na brasa) foi tirado do caminho — o dono não fica clicando
+ * três vezes por pedido. O estado ainda existe no enum e sabe avançar, para
+ * não travar nenhum pedido antigo que já estivesse nele.
+ */
 export function proximoStatus(status: OrderStatus): OrderStatus | null {
   const fluxo: Partial<Record<OrderStatus, OrderStatus>> = {
-    recebido: 'em_preparo',
+    recebido: 'saiu_entrega',
     em_preparo: 'saiu_entrega',
     saiu_entrega: 'entregue',
   }
@@ -24,7 +31,7 @@ export const ROTULO_STATUS: Record<OrderStatus, string> = {
 
 /** O botão diz o que acontece ao clicar, não o estado em que está. */
 export const ACAO_STATUS: Partial<Record<OrderStatus, string>> = {
-  recebido: 'Pôr na brasa',
+  recebido: 'Saiu pra entrega',
   em_preparo: 'Saiu pra entrega',
   saiu_entrega: 'Marcar entregue',
 }
