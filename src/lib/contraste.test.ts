@@ -13,6 +13,7 @@ const AMARELO = '#fcc600'
 const CORAL = '#f0665f'
 const LARANJA = '#e2672b'
 const ERRO = '#c23428'
+const SUCESSO = '#1f6f37'
 
 test('a fórmula bate com os valores de referência do WCAG', () => {
   assert.equal(Math.round(contraste('#000000', '#ffffff')), 21)
@@ -59,6 +60,12 @@ test('o vermelho de erro segura texto pequeno nos dois fundos', () => {
   // Coral escurecido até passar: mensagem de erro é onde mais precisa ler.
   assert.ok(passaAA(ERRO, FUNDO))
   assert.ok(passaAA(ERRO, SUPERFICIE))
+})
+
+test('o verde de sucesso segura texto pequeno nos dois fundos', () => {
+  // "Pagamento confirmado" é texto verde: precisa ler tão bem quanto o erro.
+  assert.ok(passaAA(SUCESSO, FUNDO), 'sucesso sobre branco')
+  assert.ok(passaAA(SUCESSO, SUPERFICIE), 'sucesso sobre creme')
 })
 
 test('o anel de foco é visível nos dois fundos', () => {

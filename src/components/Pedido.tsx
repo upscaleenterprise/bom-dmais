@@ -153,7 +153,13 @@ export function Pedido({
           pix && <ChavePix total={pedido.total_cents} pix={pix} />}
 
         {pedido.payment_status === 'confirmado' && (
-          <p className="rounded-lg border border-borda bg-superficie px-4 py-3 text-sm text-tinta">
+          <p className="flex items-center gap-2.5 rounded-lg border border-sucesso/40 bg-sucesso/10 px-4 py-3 text-sm font-semibold text-sucesso">
+            <span
+              aria-hidden
+              className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-sucesso text-[0.7rem] font-bold text-fundo"
+            >
+              ✓
+            </span>
             Pagamento confirmado.
           </p>
         )}

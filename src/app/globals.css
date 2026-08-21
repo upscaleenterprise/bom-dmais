@@ -23,6 +23,7 @@
   --color-coral: #f0665f; /* slogan "aqui é mais gostoso!", scooter */
   --color-laranja: #e2672b; /* painel de foto do cardápio */
   --color-erro: #c23428; /* coral escurecido até passar AA em texto pequeno */
+  --color-sucesso: #1f6f37; /* verde-mata de "deu certo": pagamento pago */
 
   --font-placa: var(--font-baloo); /* títulos arredondados do cardápio */
   --font-corpo: var(--font-nunito);
