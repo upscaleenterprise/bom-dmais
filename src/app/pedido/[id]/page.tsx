@@ -24,7 +24,8 @@ export default async function Page({
   if (pedido.payment_method === 'pix' && pedido.store.pix_key) {
     const brcode = gerarBRCode({
       chave: pedido.store.pix_key,
-      nome: pedido.store.name,
+      // O recebedor é o titular da conta; cai no nome da loja se não houver.
+      nome: pedido.store.pix_name ?? pedido.store.name,
       cidade: pedido.store.city ?? 'Brasil',
       valorCents: pedido.total_cents,
       referencia: pedido.code,

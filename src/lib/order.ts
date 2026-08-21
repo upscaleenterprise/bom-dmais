@@ -27,6 +27,8 @@ export type PedidoJson = {
     phone: string | null
     pix_key: string | null
     city: string | null
+    /** Titular da conta do Pix — o nome que o cliente vê ao pagar. */
+    pix_name: string | null
   }
   items: {
     product_name: string
