@@ -5,20 +5,19 @@ import type { OrderStatus, PaymentMethod } from './types'
 export const ATIVOS: OrderStatus[] = ['recebido', 'em_preparo', 'saiu_entrega']
 
 /**
- * O próximo passo do pedido, ou null se já acabou.
+ * Para onde o pedido pode ir a partir de onde está — pode ser mais de um.
  *
- * Fluxo enxuto para churrasquinho: Recebido → Saiu pra entrega → Entregue.
- * O "em_preparo" (na brasa) foi tirado do caminho — o dono não fica clicando
- * três vezes por pedido. O estado ainda existe no enum e sabe avançar, para
- * não travar nenhum pedido antigo que já estivesse nele.
+ * Ao receber, o dono ESCOLHE: "Pôr na brasa" (avisa o cliente que está
+ * preparando) ou "Saiu pra entrega" (pula direto, quando já está pronto). Daí
+ * em diante o caminho é único até "Entregue".
  */
-export function proximoStatus(status: OrderStatus): OrderStatus | null {
-  const fluxo: Partial<Record<OrderStatus, OrderStatus>> = {
-    recebido: 'saiu_entrega',
-    em_preparo: 'saiu_entrega',
-    saiu_entrega: 'entregue',
+export function proximosStatus(status: OrderStatus): OrderStatus[] {
+  const fluxo: Partial<Record<OrderStatus, OrderStatus[]>> = {
+    recebido: ['em_preparo', 'saiu_entrega'],
+    em_preparo: ['saiu_entrega'],
+    saiu_entrega: ['entregue'],
   }
-  return fluxo[status] ?? null
+  return fluxo[status] ?? []
 }
 
 export const ROTULO_STATUS: Record<OrderStatus, string> = {
@@ -29,11 +28,14 @@ export const ROTULO_STATUS: Record<OrderStatus, string> = {
   cancelado: 'Cancelado',
 }
 
-/** O botão diz o que acontece ao clicar, não o estado em que está. */
-export const ACAO_STATUS: Partial<Record<OrderStatus, string>> = {
-  recebido: 'Saiu pra entrega',
-  em_preparo: 'Saiu pra entrega',
-  saiu_entrega: 'Marcar entregue',
+/**
+ * O rótulo do botão descreve PARA ONDE ele leva, não o estado atual — porque
+ * um mesmo estado (recebido) pode ter dois botões, cada um pra um destino.
+ */
+export const ROTULO_ACAO: Partial<Record<OrderStatus, string>> = {
+  em_preparo: 'Pôr na brasa',
+  saiu_entrega: 'Saiu pra entrega',
+  entregue: 'Marcar entregue',
 }
 
 export const ROTULO_PAGAMENTO: Record<PaymentMethod, string> = {

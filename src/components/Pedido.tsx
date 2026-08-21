@@ -7,9 +7,12 @@ import { formatBRL } from '@/lib/money'
 import { supabase } from '@/lib/supabase'
 import { Topo } from './Topo'
 
-// Três passos, como o painel do dono: Recebido → Saiu → Entregue.
+// Recebido → (Na brasa) → Saiu → Entregue. O "Na brasa" aparece sempre na
+// linha, mas o pedido pode pular direto pra "Saiu" — aí ele conta só como fase
+// já vencida, sem prender o cliente.
 const TRILHA: { id: OrderStatus; rotulo: string }[] = [
   { id: 'recebido', rotulo: 'Recebido' },
+  { id: 'em_preparo', rotulo: 'Na brasa' },
   { id: 'saiu_entrega', rotulo: 'Saiu pra entrega' },
   { id: 'entregue', rotulo: 'Entregue' },
 ]

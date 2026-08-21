@@ -6,13 +6,13 @@ import type { OrderStatus } from '@/lib/types'
 import { formatBRL } from '@/lib/money'
 import { supabase, STORE_SLUG } from '@/lib/supabase'
 import {
-  ACAO_STATUS,
   ATIVOS,
+  ROTULO_ACAO,
   ROTULO_PAGAMENTO,
   ROTULO_STATUS,
   haQuantoTempo,
   pedidosNovos,
-  proximoStatus,
+  proximosStatus,
 } from '@/lib/fluxo'
 import { estadoParaODono } from '@/lib/horario'
 import { liberarSom, tocarSino } from '@/lib/sino'
@@ -56,7 +56,7 @@ function Cartao({
   onMudar: (id: string, s: OrderStatus) => void
   onConfirmar: (id: string) => void
 }) {
-  const proximo = proximoStatus(pedido.status)
+  const destinos = proximosStatus(pedido.status)
   const aguardandoPix =
     pedido.payment_method === 'pix' && pedido.payment_status === 'aguardando'
 
@@ -142,8 +142,8 @@ function Cartao({
         </div>
       </div>
 
-      {(aguardandoPix || proximo) && (
-        <footer className="flex gap-2 border-t border-borda px-4 py-3">
+      {(aguardandoPix || destinos.length > 0) && (
+        <footer className="flex flex-wrap gap-2 border-t border-borda px-4 py-3">
           {aguardandoPix && (
             <button
               type="button"
@@ -153,15 +153,22 @@ function Cartao({
               Confirmar Pix
             </button>
           )}
-          {proximo && (
+          {/* Um botão por destino. O primeiro (o passo natural) fica preenchido;
+              o segundo, quando existe (o atalho "saiu pra entrega"), é discreto. */}
+          {destinos.map((destino, i) => (
             <button
+              key={destino}
               type="button"
-              onClick={() => onMudar(pedido.id, proximo)}
-              className="flex-1 rounded-lg bg-amarelo px-3 py-2.5 text-sm font-semibold text-tinta transition-colors hover:bg-laranja"
+              onClick={() => onMudar(pedido.id, destino)}
+              className={`flex-1 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+                i === 0
+                  ? 'bg-amarelo text-tinta hover:bg-laranja'
+                  : 'border border-borda text-tinta-fraca hover:border-laranja hover:text-tinta'
+              }`}
             >
-              {ACAO_STATUS[pedido.status]}
+              {ROTULO_ACAO[destino]}
             </button>
-          )}
+          ))}
           {pedido.status === 'recebido' && (
             <button
               type="button"
@@ -242,12 +249,17 @@ export function Painel() {
       .single()
       .then(({ data }) => setLoja(data as Loja | null))
 
-    // Realtime só entrega o evento porque o dono tem SELECT via RLS. Para o
-    // cliente anônimo isso não funcionaria — e é por isso que lá é consulta.
+    // Busca IMEDIATA, sem esperar nada: é o que garante que os pedidos
+    // aparecem. (Antes a primeira carga só rodava quando o Realtime conectava —
+    // se o WebSocket falhava, o painel ficava eternamente vazio mesmo com
+    // pedidos no banco.)
     //
-    // A primeira carga acontece DEPOIS de assinar: buscar antes deixaria um vão
-    // entre a consulta e a inscrição, e o pedido que entrasse nesse intervalo
-    // não apareceria na tela nem geraria evento.
+    // recarregar() é async: o setState só ocorre depois do await, então não há
+    // render em cascata. O lint não enxerga isso através do useCallback.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    recarregar()
+
+    // Realtime dá a atualização instantânea, quando conecta.
     const canal = supabase
       .channel('painel-pedidos')
       .on(
@@ -255,12 +267,16 @@ export function Painel() {
         { event: '*', schema: 'public', table: 'orders' },
         () => recarregar(),
       )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') recarregar()
-      })
+      .subscribe()
+
+    // Polling de rede como rede de segurança: numa cozinha o painel não pode
+    // depender só do WebSocket. Se o Realtime cair ou nem conectar, o pedido
+    // novo ainda aparece em até 15s.
+    const t = setInterval(recarregar, 15_000)
 
     return () => {
       supabase.removeChannel(canal)
+      clearInterval(t)
     }
   }, [session, recarregar])
 

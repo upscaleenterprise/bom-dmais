@@ -1,21 +1,19 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { proximoStatus, haQuantoTempo, pedidosNovos, ATIVOS } from './fluxo.ts'
+import { proximosStatus, haQuantoTempo, pedidosNovos, ATIVOS } from './fluxo.ts'
 
-test('fluxo enxuto: recebido pula direto pra saiu pra entrega', () => {
-  // "Na brasa" (em_preparo) saiu do caminho — o dono não clica 3x por pedido.
-  assert.equal(proximoStatus('recebido'), 'saiu_entrega')
-  assert.equal(proximoStatus('saiu_entrega'), 'entregue')
+test('ao receber, o dono escolhe: pôr na brasa OU saiu pra entrega', () => {
+  assert.deepEqual(proximosStatus('recebido'), ['em_preparo', 'saiu_entrega'])
 })
 
-test('um pedido legado em em_preparo ainda sabe avançar', () => {
-  // O estado não é mais gerado, mas não pode travar quem já estivesse nele.
-  assert.equal(proximoStatus('em_preparo'), 'saiu_entrega')
+test('depois da brasa, o caminho é único', () => {
+  assert.deepEqual(proximosStatus('em_preparo'), ['saiu_entrega'])
+  assert.deepEqual(proximosStatus('saiu_entrega'), ['entregue'])
 })
 
 test('pedido finalizado não tem próximo passo', () => {
-  assert.equal(proximoStatus('entregue'), null)
-  assert.equal(proximoStatus('cancelado'), null, 'cancelado não volta pro fluxo')
+  assert.deepEqual(proximosStatus('entregue'), [])
+  assert.deepEqual(proximosStatus('cancelado'), [], 'cancelado não volta pro fluxo')
 })
 
 test('ativos são os que a cozinha ainda precisa tocar', () => {
