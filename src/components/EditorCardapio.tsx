@@ -1,15 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { parseBRL } from '@/lib/money'
 import {
   alternarProduto,
   carregarParaEditar,
+  enviarFotoProduto,
+  removerFotoProduto,
   salvarPrecoVariacao,
   type CatEdit,
   type ProdEdit,
   type VarEdit,
 } from '@/lib/cardapioAdmin'
+
+const TAMANHO_MAX = 5 * 1024 * 1024 // 5 MB: foto de celular cabe folgado
 
 /** Interruptor acessível — estado no rótulo, não só na cor. */
 function Chave({
@@ -114,6 +119,105 @@ function PrecoVariacao({
   )
 }
 
+/** Foto do produto: mostra a atual, deixa trocar e remover. O arquivo vai
+ *  direto do dono pro Storage dele — nunca passa por fora. */
+function FotoProduto({
+  produto,
+  onErro,
+}: {
+  produto: ProdEdit
+  onErro: (m: string) => void
+}) {
+  const [url, setUrl] = useState(produto.image_url)
+  const [enviando, setEnviando] = useState(false)
+  const input = useRef<HTMLInputElement>(null)
+
+  async function aoEscolher(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // permite reescolher o MESMO arquivo depois
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      onErro('Escolha um arquivo de imagem (JPG ou PNG).')
+      return
+    }
+    if (file.size > TAMANHO_MAX) {
+      onErro('Foto muito grande — o limite é 5 MB.')
+      return
+    }
+
+    setEnviando(true)
+    try {
+      const nova = await enviarFotoProduto(produto.id, file, url)
+      setUrl(nova)
+    } catch (err) {
+      onErro(err instanceof Error ? err.message : 'Não foi possível enviar a foto.')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  async function remover() {
+    setEnviando(true)
+    try {
+      await removerFotoProduto(produto.id, url)
+      setUrl(null)
+    } catch (err) {
+      onErro(err instanceof Error ? err.message : 'Não foi possível remover a foto.')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <div className="mt-3 flex items-center gap-3 border-t border-borda/60 pt-3">
+      {url ? (
+        <Image
+          src={url}
+          alt=""
+          width={56}
+          height={56}
+          // A foto muda com a mesma URL raramente; o nome único já quebra cache.
+          unoptimized
+          className="h-14 w-14 shrink-0 rounded-lg border border-borda object-cover"
+        />
+      ) : (
+        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-dashed border-borda text-lg text-tinta-fraca">
+          🍽️
+        </div>
+      )}
+
+      <div className="flex flex-col gap-1.5">
+        <button
+          type="button"
+          onClick={() => input.current?.click()}
+          disabled={enviando}
+          className="etiqueta w-fit rounded-lg bg-amarelo px-3 py-1.5 text-tinta transition-colors hover:bg-laranja disabled:opacity-50"
+        >
+          {enviando ? 'Enviando...' : url ? 'Trocar foto' : 'Adicionar foto'}
+        </button>
+        {url && !enviando && (
+          <button
+            type="button"
+            onClick={remover}
+            className="etiqueta w-fit text-tinta-fraca underline-offset-4 hover:text-erro hover:underline"
+          >
+            Remover
+          </button>
+        )}
+      </div>
+
+      <input
+        ref={input}
+        type="file"
+        accept="image/*"
+        onChange={aoEscolher}
+        className="hidden"
+      />
+    </div>
+  )
+}
+
 function ProdutoEditor({
   produto,
   onErro,
@@ -160,6 +264,8 @@ function ProdutoEditor({
           <PrecoVariacao key={v.id} variante={v} onErro={onErro} />
         ))}
       </div>
+
+      <FotoProduto produto={produto} onErro={onErro} />
     </article>
   )
 }
